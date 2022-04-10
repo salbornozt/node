@@ -11,7 +11,10 @@ module.exports = function(injectedStore) {
         var password = body.password;
 
         const data = await injectedStore.getUserByEmail(email);
+        console.log(data.nom_usuario+'<-');
         if (data) {
+            return auth.signUser(data);
+            /*
             return bcrypt.compare(password, data.PASSWORD).then((equal) => {
 
                 if (equal) {
@@ -22,6 +25,7 @@ module.exports = function(injectedStore) {
             }).catch((err) => {
                 throw new Error('User not found')
             })
+            */
 
         } else {
             throw new Error('User not found')

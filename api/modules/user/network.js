@@ -14,7 +14,7 @@ router.get('/', secure('list'), (req, resp) => {
 
 });
 
-router.get('/:id', secure('get'), (req, resp) => {
+router.get('/:id', (req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
 
