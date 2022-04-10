@@ -14,6 +14,7 @@ var allowCrossDomain = function(req, res, next) {
 
     next();
 }
+// puto el que lo lea
 app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use('/api/login/', auth)
