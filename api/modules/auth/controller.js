@@ -11,11 +11,11 @@ module.exports = function(injectedStore) {
         var password = body.password;
 
         const data = await injectedStore.getUserByEmail(email);
-        console.log(data.nom_usuario+'<-');
+        console.log(data.contrasena+'<-');
         if (data) {
-            return auth.signUser(data);
-            /*
-            return bcrypt.compare(password, data.PASSWORD).then((equal) => {
+            //return auth.signUser(data);
+            
+            return bcrypt.compare(password, data.contrasena).then((equal) => {
 
                 if (equal) {
                     return auth.signUser(data);
@@ -23,9 +23,10 @@ module.exports = function(injectedStore) {
                     throw new Error('User not found');
                 }
             }).catch((err) => {
+                console.error(err)
                 throw new Error('User not found')
             })
-            */
+        
 
         } else {
             throw new Error('User not found')

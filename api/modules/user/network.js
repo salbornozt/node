@@ -41,8 +41,10 @@ router.post('/', (req, resp) => {
 
 router.put('/', secure('update'), (req, resp) => {
     controller.update(req.body).then((result) => {
-        response.Sucess(req, resp, data, 200);
+        console.log('succedd'+result);
+        response.Sucess(req, resp, result, 200);
     }).catch((error) => {
+        console.log('error'+error);
         response.Error(req, resp, error, 500);
     })
 })
