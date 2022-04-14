@@ -19,35 +19,40 @@ module.exports = function(injectedStore) {
 
     async function insert(body) {
         let user = {
-            id: nanoid(),
             name: body.name,
+            user_type : body.user_type,
             lastname: body.lastname,
-            email: body.email,
             document: body.document
         }
+        const userInsertResult = await injectedStore.insertUser(user);
+        console.log("inserting : "+userInsertResult)
         if (body.password) {
             const pss = await bcrypt.hash(body.password, 6);
             await auth.insert({
-                user_id: user.id,
-                email: user.email,
+                user_id: userInsertResult.cod_usuario,
+                email: body.email,
                 password: pss
             })
         }
         console.log(user);
 
-        return injectedStore.insert(user);
+        return userInsertResult;
     }
 
     async function update(body) {
-        let user = {
-            id: body.id,
-            name: body.name,
-            lastname: body.lastname,
-            email: body.email,
-            document: body.document
+        console.log(body);
+        let userBody = body.user;
+        let usuario = {
+            id: userBody.cod_usuario,
+            name: userBody.nom_usuario,
+            lastname: userBody.apellido_usuario,
+            email: userBody.email,
+            user_type : userBody.tipo_usuario,   
+            document: userBody.documento,
+            mobile: userBody.celular
         }
 
-        return injectedStore.update(user);
+        return injectedStore.updateUser(usuario);
 
     }
     async function remove(id) {
