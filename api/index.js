@@ -4,6 +4,7 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const user = require('./modules/user/network')
 const auth = require('./modules/auth/network');
+const errors = require('../network/errors')
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -19,6 +20,7 @@ app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use('/api/login/', auth)
 app.use('/api/user/', user);
+app.use(errors);
 
 app.listen(port, () => {
     console.log('api started');

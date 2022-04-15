@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { Error } = require('../network/response');
-
+const error = require('../utils/error')
 function signUser(user) {
     return jwt.sign(user, 'mykey');
 }
@@ -12,11 +12,14 @@ function verify(req) {
     console.log('sad ' + authorization);
 
     if (authorization.includes('Bearer')) {
-
-        let token = authorization.replace('Bearer ', '');
-        return jwt.verify(token, 'mykey');
+        try {
+            let token = authorization.replace('Bearer ', '');
+            return jwt.verify(token, 'mykey');
+        } catch (err) {
+            throw error('Jwt Invalido', 401)
+        }
     } else {
-        throw new Error('you need a token');
+        throw error('you need a token', 401);
     }
 }
 
