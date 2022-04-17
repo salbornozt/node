@@ -258,7 +258,37 @@ function insertCelulares(data) {
   });
 }
 
+function getNaturaleza() {
+  var data = "*"
+  var table = "naturaleza"
+  return new Promise((resolve, reject) => {
+    client.query(`select ${data} from ${table}`,[], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
 
+      }
+      resolve(res.rows);
+    })
+  })
+
+}
+
+function getNaturalezaById(id) {
+  var data = "*"
+  var table = "naturaleza"
+  return new Promise((resolve, reject) => {
+    client.query(`select ${data} from ${table} where cod_naturaleza = $1`, [id], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      resolve(res.rows);
+    })
+  })
+
+}
 
 module.exports = {
   list,
@@ -274,6 +304,8 @@ module.exports = {
   insertClient,
   insertEmails,
   insertCelulares,
-  getClientByDocument
+  getClientByDocument,
+  getNaturaleza,
+  getNaturalezaById
 
 }

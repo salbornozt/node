@@ -3,6 +3,7 @@ const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
 const clients = require('./modules/customer/network');
+const naturaleza = require('./modules/naturaleza/network');
 const user = require('./modules/user/network')
 const auth = require('./modules/auth/network');
 const errors = require('../network/errors')
@@ -21,7 +22,8 @@ app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use('/api/login/', auth)
 app.use('/api/user/', user);
-app.use('/api/client/',clients)
+app.use('/api/client/',clients);
+app.use('/api/naturaleza/',naturaleza);
 app.use(errors);
 
 app.listen(port, () => {
