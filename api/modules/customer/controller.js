@@ -14,7 +14,7 @@ module.exports = function(injectedStore) {
     }
 
     async function get(id) {
-        let customer = await injectedStore.getClientByDocument(id);
+        let customer = await injectedStore.getClient(id);
         let emails = await injectedStore.getClientEmails(customer.cod_cliente);
         let phones = await injectedStore.getClientPhones(customer.cod_cliente);
         customer.correos = emails;
@@ -61,6 +61,11 @@ module.exports = function(injectedStore) {
         return customerInsertResult;
     }
 
+    async function insertToGetId() {
+                
+        return injectedStore.insertClientToGetId();
+    }
+
     async function update(body) {
         console.log(body);
         let userBody = body.user;
@@ -78,7 +83,7 @@ module.exports = function(injectedStore) {
 
     }
     async function remove(id) {
-        return injectedStore.removeUser(id);
+        return injectedStore.removeClient(id);
     }
 
     return {
@@ -86,7 +91,7 @@ module.exports = function(injectedStore) {
         insert,
         update,
         remove,
-        get
+        get, insertToGetId
     }
 
 }
