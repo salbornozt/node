@@ -3,11 +3,14 @@ const pgp = require('pg-promise')
 const error = require('../network/errors')
 
 const client = new Client({
-  user: 'postgres',
-  host: '35.225.16.55',
-  database: 'esquivia_db',
-  password: 'MyDbASTR_DT_2021',
+  user: 'sqeksiepwqosov',
+  host: 'ec2-52-71-69-66.compute-1.amazonaws.com',
+  database: 'dedicjaogenj88',
+  password: '9ed468ee5c00a70c7beb002e880f3548026b5489fdddb7a922a48bfbf3e0fd15',
   port: 5432,
+  ssl: {
+    rejectUnauthorized: false
+  }
 })
 
 client.connect(function (err) {
