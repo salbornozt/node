@@ -227,6 +227,48 @@ function insertClient(data) {
   });
 }
 
+function insertClientToGetId() {
+
+  let name = "Nuevo Cliente";
+  return new Promise((resolve, reject) => {
+    let query = `insert into cliente(nom_cliente) values ($1) RETURNING cod_cliente`
+    client.query(query, [name], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      console.log("client inserted");
+      res.rows[0].nom_cliente = name
+      console.log(res.rows[0]);
+
+      resolve(res.rows[0]);
+    })
+
+  });
+}
+
+function removeClient(id) {
+
+  
+  return new Promise((resolve, reject) => {
+    let query = `delete from cliente where cod_cliente = $1`
+    client.query(query, [id], (err, res) => {
+      let respuesta = {
+        isDeleted : true
+      }
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      console.log("client removed");
+      
+
+      resolve(respuesta);
+    })
+
+  });
+}
+
 function insertEmails(data) {
 
 
@@ -478,6 +520,7 @@ module.exports = {
   getClientByDocument,
   getNaturaleza,
   getNaturalezaById,
+
   insertDocumento,
   updateDocumento,
   deleteDocumento,
@@ -487,5 +530,8 @@ module.exports = {
   updateSeguro,
   deleteSeguro,
   getSeguro,
-  listSeguros
+  listSeguros,
+  insertClientToGetId,
+  removeClient
+
 }
