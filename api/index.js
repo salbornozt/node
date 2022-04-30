@@ -4,7 +4,7 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const clients = require('./modules/customer/network');
 const naturaleza = require('./modules/naturaleza/network');
-const documento = require('./modules/documentos/network');
+const campos = require('./modules/campos/network');
 const seguro = require('./modules/seguros/network')
 
 
@@ -22,14 +22,14 @@ var allowCrossDomain = function(req, res, next) {
 
     next();
 }
-// puto el que lo lea
+
 app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use('/api/login/', auth)
 app.use('/api/user/', user);
 app.use('/api/client/',clients);
 app.use('/api/naturaleza/',naturaleza);
-app.use('/api/documentos/',documento);
+app.use('/api/campos/',campos);
 app.use('/api/seguros/',seguro)
 app.use(errors);
 
