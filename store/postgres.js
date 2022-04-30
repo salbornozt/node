@@ -335,6 +335,174 @@ function getNaturalezaById(id) {
 
 }
 
+/**
+  Documentos
+
+ */
+
+  function insertDocumento(data) {
+    console.log(data);
+    return new Promise((resolve, reject) => {
+      let query = `insert into documento(nom_documento,cod_seguro,obligatorio) values ($1,$2,$3) RETURNING cod_documento`
+      client.query(query, [data.nom_documento, data.cod_seguro, data.obligatorio], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+        }
+        console.log("document inserted");
+        console.log(res.rows[0]);
+        resolve(res.rows[0]);
+      })
+  
+    });
+  }
+
+  function updateDocumento(data) {
+    console.log(data)  
+    return new Promise((resolve, reject) => {
+      let query = `UPDATE documento SET nom_documento = $1, cod_seguro = $2, obligatorio = $3 WHERE cod_documento =$4 RETURNING cod_documento`
+      client.query(query, [data.nom_documento, data.cod_seguro, data.obligatorio, data.id], (err, res) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("Document updated" + res.rows[0]);
+        resolve(res.rows[0]);
+      })
+  
+    });
+  }
+
+  function deleteDocumento(id) {
+    console.log(id)  
+    return new Promise(( reject) => {
+      let query = `delete from documento WHERE cod_documento =$1 RETURNING cod_documento`
+      client.query(query, [id], (err) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("Document deleted");
+        
+      })
+  
+    });
+  }
+ 
+  function getDocumento(id) {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from documento WHERE cod_documento = $1`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);  
+        }  
+        resolve(res.rows[0]);
+      })
+    });
+  }
+
+  function listDocumentos() {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from documento`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('documents fetched');
+  
+        resolve(res.rows);
+      })
+    })
+  }
+  
+  /**
+  Seguros
+
+ */
+
+  function insertSeguro(data) {
+    console.log(data);
+    return new Promise((resolve, reject) => {
+      let query = `insert into seguro(cod_tipo_seguro,vigencia,cod_compania,precio) values ($1,$2,$3,$4) RETURNING cod_tipo_seguro`
+      client.query(query, [data.cod_tipo_seguro, data.vigencia, data.cod_compania, data.precio], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+        }
+        console.log("Insurance inserted");
+        console.log(res.rows[0]);
+        resolve(res.rows[0]);
+      })
+  
+    });
+  }
+
+  function updateSeguro(data) {
+    console.log(data)  
+    return new Promise((resolve, reject) => {
+      let query = `UPDATE seguro SET cod_tipo_seguro = $1, vigencia = $2, cod_compania = $3, precio=$4 WHERE cod_seguro =$5 RETURNING cod_tipo_seguro`
+      client.query(query, [data.cod_tipo_seguro, data.vigencia, data.cod_compania, data.precio,data.id], (err, res) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("Insurance updated" + res.rows[0]);
+        resolve(res.rows[0]);
+      })
+  
+    });
+  }
+
+  function deleteSeguro(id) {
+    console.log(id)  
+    return new Promise(( reject) => {
+      let query = `delete from seguro WHERE cod_seguro =$1 RETURNING cod_seguro`
+      client.query(query, [id], (err) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("Insurance deleted");
+        
+      })
+  
+    });
+  }
+
+  function getSeguro(id) {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from seguro WHERE cod_seguro = $1`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);  
+        }  
+        resolve(res.rows[0]);
+      })
+    });
+  }
+
+  function listSeguros() {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from seguros`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('insurance fetched');
+  
+        resolve(res.rows);
+      })
+    })
+  }
+
+  
+
 module.exports = {
   list,
   get,
@@ -352,6 +520,17 @@ module.exports = {
   getClientByDocument,
   getNaturaleza,
   getNaturalezaById,
+
+  insertDocumento,
+  updateDocumento,
+  deleteDocumento,
+  getDocumento,
+  listDocumentos,
+  insertSeguro,
+  updateSeguro,
+  deleteSeguro,
+  getSeguro,
+  listSeguros,
   insertClientToGetId,
   removeClient
 

@@ -4,9 +4,14 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const clients = require('./modules/customer/network');
 const naturaleza = require('./modules/naturaleza/network');
+const documento = require('./modules/documentos/network');
+const seguro = require('./modules/seguros/network')
+
+
 const user = require('./modules/user/network')
 const auth = require('./modules/auth/network');
-const errors = require('../network/errors')
+const errors = require('../network/errors');
+
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -24,6 +29,8 @@ app.use('/api/login/', auth)
 app.use('/api/user/', user);
 app.use('/api/client/',clients);
 app.use('/api/naturaleza/',naturaleza);
+app.use('/api/documentos/',documento);
+app.use('/api/seguros/',seguro)
 app.use(errors);
 
 app.listen(port, () => {
