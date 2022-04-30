@@ -525,6 +525,27 @@ function getNaturalezaById(id) {
       })
     })
   }
+
+  /*
+
+  Anexos Procesos
+
+  */
+
+  function listAnexoProcesos() {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from anexo_proceso`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('Anex processs fetched');
+  
+        resolve(res.rows);
+      })
+    })
+  }
  
   
 
@@ -558,6 +579,7 @@ module.exports = {
   listSeguros,
   insertClientToGetId,
   removeClient,
-  listProcesos
+  listProcesos,
+  listAnexoProcesos
 
 }
