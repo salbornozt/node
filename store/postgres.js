@@ -336,7 +336,7 @@ function getNaturalezaById(id) {
 }
 
 /**
-  Documentos
+  Campos
 
  */
 
@@ -403,15 +403,19 @@ function getNaturalezaById(id) {
     });
   }
 
-  function listDocumentos() {    
+  function listCampos() {    
     return new Promise((resolve, reject) => {
-      client.query(`select * from documento`, (err, res) => {
+      client.query(`SELECT campo_seguro.cod_campo_seguro, campo_seguro.cod_campo, campo_seguro.cod_seguro, campo.cod_campo, campo.nom_campo   
+      FROM campo  
+      INNER JOIN campo_seguro  
+      ON campo.cod_campo = campo_seguro.cod_campo  
+      ORDER BY cod_campo_seguro;  `, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
   
         }
-        console.log('documents fetched');
+        console.log('campos fetched');
   
         resolve(res.rows);
       })
@@ -501,6 +505,7 @@ function getNaturalezaById(id) {
     })
   }
 
+ 
   
 
 module.exports = {
@@ -525,7 +530,7 @@ module.exports = {
   updateDocumento,
   deleteDocumento,
   getDocumento,
-  listDocumentos,
+  listCampos,
   insertSeguro,
   updateSeguro,
   deleteSeguro,
