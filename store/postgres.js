@@ -505,6 +505,26 @@ function getNaturalezaById(id) {
     })
   }
 
+  /*
+
+  Procesos
+
+  */
+
+  function listProcesos() {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from proceso`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('processs fetched');
+  
+        resolve(res.rows);
+      })
+    })
+  }
  
   
 
@@ -537,6 +557,7 @@ module.exports = {
   getSeguro,
   listSeguros,
   insertClientToGetId,
-  removeClient
+  removeClient,
+  listProcesos
 
 }
