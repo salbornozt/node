@@ -14,7 +14,11 @@ module.exports = function(injectedStore) {
     }
 
     async function get(id) {
-        return injectedStore.getCampos(id);
+
+        
+
+        return injectedStore.getCamposPorSeguro(id);
+
     }
 
 

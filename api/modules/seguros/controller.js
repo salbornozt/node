@@ -10,7 +10,7 @@ module.exports = function(injectedStore) {
 
     async function list() {
 
-        return injectedStore.listCampos();
+        return injectedStore.listSeguros();
     }
 
     async function get(id) {
