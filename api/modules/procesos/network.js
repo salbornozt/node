@@ -31,11 +31,13 @@ router.delete('/:id', (req, resp) => {
 })
 
 router.post('/', (req, resp) => {
-    controller.insert(req.body).then((result) => {
+    console.log(req.body);
+    response.Sucess(req, resp, 'result', 200);
+    /*controller.insert(req.body).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
         response.Error(req, resp, error.message, 500);
-    })
+    })*/
 })
 
 

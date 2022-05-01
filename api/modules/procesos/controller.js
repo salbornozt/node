@@ -19,13 +19,8 @@ module.exports = function(injectedStore) {
 
 
     async function insert(body) {
-        console.log(body.cod_proceso);
-        let seguro = {
-            cod_tipo_seguro: body.cod_tipo_seguro,
-            vigencia : body.vigencia,
-            cod_compania: body.cod_compania,
-            precio: body.precio
-        }
+        console.log(body);
+        
         return injectedStore.insertProceso(seguro);
     }
 

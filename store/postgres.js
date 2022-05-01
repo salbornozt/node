@@ -3,10 +3,10 @@ const pgp = require('pg-promise')
 const error = require('../network/errors')
 
 const client = new Client({
-  user: 'sqeksiepwqosov',
-  host: 'ec2-52-71-69-66.compute-1.amazonaws.com',
-  database: 'dedicjaogenj88',
-  password: '9ed468ee5c00a70c7beb002e880f3548026b5489fdddb7a922a48bfbf3e0fd15',
+  user: 'mvzvdlzsmzjcpu',
+  host: 'ec2-54-86-224-85.compute-1.amazonaws.com',
+  database: 'dcnl90uskjd2q2',
+  password: 'a61be4c1b6f897d6eb84a95f7daaf811bf9286151e26851b85abc4277c6a4c75',
   port: 5432,
   ssl: {
     rejectUnauthorized: false
@@ -21,20 +21,22 @@ client.connect(function (err) {
   console.log("Connected!");
 });
 
+
 function list() {
-  var data = "*"
+  var data = "usuario.cod_usuario, email, contrasena, nom_usuario, apellido_usuario, tipo_usuario, documento, celular"
   var table = "usuario"
   return new Promise((resolve, reject) => {
-    client.query(`select ${data} from ${table}`, [email], (err, res) => {
+    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario`, [], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
 
       }
-      resolve(res.rows[0]);
+      resolve(res.rows);
     })
   })
 }
+
 
 
 function get(id) {
@@ -391,14 +393,18 @@ function getNaturalezaById(id) {
     });
   }
  
-  function getDocumento(id) {    
+  function getCamposPorSeguro(id) {    
     return new Promise((resolve, reject) => {
-      client.query(`select * from documento WHERE cod_documento = $1`, [id], (err, res) => {
+      client.query(`SELECT campo_seguro.cod_campo_seguro, campo_seguro.cod_campo, campo_seguro.cod_seguro, campo.cod_campo, campo.nom_campo   
+      FROM campo  
+      INNER JOIN campo_seguro  
+      ON campo.cod_campo = campo_seguro.cod_campo  
+      WHERE campo_seguro.cod_seguro = $1`, [id], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);  
         }  
-        resolve(res.rows[0]);
+        resolve(res.rows);
       })
     });
   }
@@ -409,7 +415,7 @@ function getNaturalezaById(id) {
       FROM campo  
       INNER JOIN campo_seguro  
       ON campo.cod_campo = campo_seguro.cod_campo  
-      ORDER BY cod_campo_seguro;  `, (err, res) => {
+      ORDER BY cod_campo_seguro;`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -492,7 +498,12 @@ function getNaturalezaById(id) {
 
   function listSeguros() {    
     return new Promise((resolve, reject) => {
-      client.query(`select * from seguros`, (err, res) => {
+      client.query(`SELECT seguro.cod_seguro, seguro.cod_tipo_seguro,tipo_seguro.nom_tipo_seguro, seguro.vigencia,seguro.cod_compania, compania.nom_compania,seguro.precio
+      FROM seguro  
+      INNER JOIN tipo_seguro  
+      ON seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      INNER JOIN compania  
+      ON seguro.cod_compania = compania.cod_compania`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -570,7 +581,7 @@ module.exports = {
   insertDocumento,
   updateDocumento,
   deleteDocumento,
-  getDocumento,
+  getCamposPorSeguro,
   listCampos,
   insertSeguro,
   updateSeguro,
