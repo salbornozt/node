@@ -393,6 +393,8 @@ function getNaturalezaById(id) {
     });
   }
  
+
+
   function getCamposPorSeguro(id) {    
     return new Promise((resolve, reject) => {
       client.query(`SELECT campo_seguro.cod_campo_seguro, campo_seguro.cod_campo, campo_seguro.cod_seguro, campo.cod_campo, campo.nom_campo   
@@ -400,6 +402,7 @@ function getNaturalezaById(id) {
       INNER JOIN campo_seguro  
       ON campo.cod_campo = campo_seguro.cod_campo  
       WHERE campo_seguro.cod_seguro = $1`, [id], (err, res) => {
+
         if (err) {
           console.error(err);
           reject(err);  
@@ -581,7 +584,10 @@ module.exports = {
   insertDocumento,
   updateDocumento,
   deleteDocumento,
+
+
   getCamposPorSeguro,
+
   listCampos,
   insertSeguro,
   updateSeguro,

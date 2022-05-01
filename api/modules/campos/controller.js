@@ -10,11 +10,15 @@ module.exports = function(injectedStore) {
 
     async function list() {
 
-        return injectedStore.listDocumentos();
+        return injectedStore.listCampos();
     }
 
     async function get(id) {
+
+        
+
         return injectedStore.getCamposPorSeguro(id);
+
     }
 
 
