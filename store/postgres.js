@@ -540,6 +540,23 @@ function getNaturalezaById(id) {
     })
   }
 
+  function insertProceso(data) {
+    
+    return new Promise((resolve, reject) => {
+      let query = `insert into proceso(cod_seguro,cod_usuario,cod_cliente,cod_status,fecha_inicio,fecha_final) values ($1,$2,$3,$4,$5,$6) RETURNING cod_proceso`
+      client.query(query, [data.cod_seguro, data.cod_usuario, data.cod_cliente, data.cod_status, data.fecha_inicio, data.fecha_final], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+        }
+        console.log("process inserted");
+        console.log(res.rows[0]);
+        resolve(res.rows[0]);
+      })
+  
+    });
+  }
+
   /*
 
   Anexos Procesos
@@ -557,6 +574,20 @@ function getNaturalezaById(id) {
         console.log('Anex processs fetched');
   
         resolve(res.rows);
+      })
+    })
+  }
+  function insertAnexoProceso(campo) {    
+    return new Promise((resolve, reject) => {
+      client.query(`insert into anexo_proceso(cod_proceso,valor,url) values ($1,$2,$3) RETURNING cod_anexo_proceso`,[campo.cod_proceso, campo.valor, campo.url], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('Anex processs inserted');
+  
+        resolve(res.rows[0]);
       })
     })
   }
@@ -597,6 +628,8 @@ module.exports = {
   insertClientToGetId,
   removeClient,
   listProcesos,
-  listAnexoProcesos
+  insertProceso,
+  listAnexoProcesos,
+  insertAnexoProceso
 
 }
