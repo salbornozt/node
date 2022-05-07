@@ -37,6 +37,37 @@ function list() {
   })
 }
 
+function getEmpleados() {
+  var data = "usuario.cod_usuario, email, contrasena, nom_usuario, apellido_usuario, tipo_usuario, documento, celular"
+  var table = "usuario"
+  return new Promise((resolve, reject) => {
+    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE usuario.tipo_usuario=0`, [], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      resolve(res.rows);
+    })
+  })
+}
+
+
+function getEmpleadoById(id) {
+  var data = "usuario.cod_usuario, email, contrasena, nom_usuario, apellido_usuario, tipo_usuario, documento, celular"
+  var table = "usuario"
+  return new Promise((resolve, reject) => {
+    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE usuario.cod_usuario=$1`, [id], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      resolve(res.rows[0]);
+    })
+  })
+}
+
 
 
 function get(id) {
@@ -243,6 +274,24 @@ function insertClientToGetId() {
       res.rows[0].nom_cliente = name
       console.log(res.rows[0]);
 
+      resolve(res.rows[0]);
+    })
+
+  });
+}
+
+function insertEmpleadoById() {
+
+  let name = "Nuevo Empleado";
+  return new Promise((resolve, reject) => {
+    let query = `insert into usuario(nom_usuario,tipo_usuario) values ($1,0) RETURNING cod_usuario`
+    client.query(query, [name], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      console.log("empleado inserted");  
+      res.rows[0].nom_usuario = name
       resolve(res.rows[0]);
     })
 
@@ -527,12 +576,24 @@ function getNaturalezaById(id) {
 
   function listProcesos() {    
     return new Promise((resolve, reject) => {
-      client.query(`select * from proceso`, (err, res) => {
+      client.query(`select cod_proceso, nom_cliente, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+       from proceso
+       inner join cliente 
+       on proceso.cod_cliente = cliente.cod_cliente
+       inner join seguro
+       on proceso.cod_seguro = seguro.cod_seguro
+       inner join tipo_seguro
+       on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+       inner join status
+       on proceso.cod_status = status.cod_status
+       inner join usuario
+       on proceso.cod_usuario = usuario.cod_usuario`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
   
         }
+        console.log(res.rows[0])
         console.log('processs fetched');
   
         resolve(res.rows);
@@ -628,8 +689,15 @@ module.exports = {
   insertClientToGetId,
   removeClient,
   listProcesos,
-  insertProceso,
+
   listAnexoProcesos,
+  getEmpleados,
+  getEmpleadoById,
+  insertEmpleadoById,
+
+
+  insertProceso,
   insertAnexoProceso
+
 
 }
