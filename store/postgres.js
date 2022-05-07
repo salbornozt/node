@@ -260,6 +260,22 @@ function insertClient(data) {
   });
 }
 
+function updateClient(id,data) {
+
+  return new Promise((resolve, reject) => {
+    let query = `update cliente set nom_cliente=$1, ocupacion=$2, ciudad=$3, cedula=$4, direccion=$5, cod_naturaleza=$6, cod_tipo_cliente=$7, sexo=$8, company=$9, birth_date=$10 where cod_cliente = $11`
+    client.query(query, [data.nom_cliente, data.ocupacion, data.ciudad, data.cedula, data.direccion, data.cod_naturaleza, data.cod_tipo_cliente, data.sexo, data.company, data.birth_date, id], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      console.log("client updated");
+      console.log(res);
+      resolve(res);
+    })
+
+  });
+}
 function insertClientToGetId() {
 
   let name = "Nuevo Cliente";
@@ -337,18 +353,53 @@ function insertEmails(data) {
 
   });
 }
+function deleteEmails(cod_cliente) {
+
+
+  return new Promise((resolve, reject) => {
+    let query = `delete from email_cliente where cod_cliente=$1`
+    client.query(query, [cod_cliente], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+
+      resolve(res);
+      console.log("emails deleted");
+    })
+
+  });
+}
 
 function insertCelulares(data) {
 
   return new Promise((resolve, reject) => {
     let query = `insert into celular_cliente(numero,label,cod_cliente) values ($1,$2,$3)`
-    client.query(query, [data.numero, data.label, data.cod_cliente], (err, res) => {
+    client.query(query, [data.phoneNumber, data.label, data.cod_cliente], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
       }
       console.log("celulares inserted");
       resolve(res);
+    })
+
+  });
+}
+
+function deleteCelulares(cod_cliente) {
+
+
+  return new Promise((resolve, reject) => {
+    let query = `delete from celular_cliente where cod_cliente=$1`
+    client.query(query, [cod_cliente], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+
+      resolve(res);
+      console.log("phones deleted");
     })
 
   });
@@ -664,11 +715,14 @@ module.exports = {
   insertAuth,
   listClients,
   getClient,
+  updateClient,
   getClientEmails,
   getClientPhones,
   insertClient,
   insertEmails,
+  deleteEmails,
   insertCelulares,
+  deleteCelulares,
   getClientByDocument,
   getNaturaleza,
   getNaturalezaById,
