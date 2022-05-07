@@ -14,7 +14,7 @@ router.get('/', secure('list'), (req, resp) => {
 
 });
 
-router.get('/:id', secure('get'),(req, resp) => {
+router.get('/:id', secure('get'), (req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
 
@@ -41,10 +41,23 @@ router.post('/', (req, resp) => {
 
 router.put('/', secure('update'), (req, resp) => {
     controller.update(req.body).then((result) => {
-        console.log('succedd'+result);
+        console.log('succedd' + result);
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
-        console.log('error'+error);
+        console.log('error' + error);
+        response.Error(req, resp, error, 500);
+    })
+})
+
+router.patch('/', secure('update'), (req, resp) => {
+    console.log(req.body);
+
+
+    controller.update(req.body).then((result) => {
+        console.log('succedd' + result);
+        response.Sucess(req, resp, result, 200);
+    }).catch((error) => {
+        console.log('error' + error);
         response.Error(req, resp, error, 500);
     })
 })
