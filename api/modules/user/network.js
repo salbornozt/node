@@ -14,6 +14,32 @@ router.get('/', secure('list'), (req, resp) => {
 
 });
 
+router.get('/empleados/', (req, resp) => {
+    controller.getEmpleados().then((data) => {
+        response.Sucess(req, resp, data, 200);
+    }).catch((error) => {
+        response.Error(req, resp, error.message, 500);
+    })
+
+});
+
+router.get('/empleados/:id', (req, resp) => {
+    controller.getEmpleadoById(req.params.id).then((data) => {
+        response.Sucess(req, resp, data, 200);
+    }).catch((error) => {
+        response.Error(req, resp, error.message, 500);
+    })
+
+});
+
+router.post('/empleados/', (req, resp) => {
+    controller.insertEmpleadoById().then((result) => {
+        response.Sucess(req, resp, result, 200);
+    }).catch((error) => {
+        response.Error(req, resp, error.message, 500);
+    })
+})
+
 router.get('/:id', secure('get'),(req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
