@@ -613,13 +613,13 @@ function getNaturalezaById(id) {
   
         }
         console.log('insurance fetched');
-  
+        console.log(res.rows);
         resolve(res.rows);
       })
     })
   }
 
-  /**
+/**
    * 
    * Tipo seguros
    */
@@ -644,31 +644,98 @@ function getNaturalezaById(id) {
 
   */
 
-  function listProcesos() {    
+  function getNumeroCamposSeguro(id) {    
     return new Promise((resolve, reject) => {
-      client.query(`select cod_proceso, nom_cliente, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
-       from proceso
-       inner join cliente 
-       on proceso.cod_cliente = cliente.cod_cliente
-       inner join seguro
-       on proceso.cod_seguro = seguro.cod_seguro
-       inner join tipo_seguro
-       on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
-       inner join status
-       on proceso.cod_status = status.cod_status
-       inner join usuario
-       on proceso.cod_usuario = usuario.cod_usuario`, (err, res) => {
+      
+      client.query(`SELECT campo_seguro.cod_campo_seguro, campo_seguro.cod_campo, campo_seguro.cod_seguro, campo.cod_campo, campo.nom_campo   
+      FROM campo  
+      INNER JOIN campo_seguro  
+      ON campo.cod_campo = campo_seguro.cod_campo  
+      WHERE campo_seguro.cod_seguro = $1`, [id], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
   
-        }
-        console.log(res.rows[0])
-        console.log('processs fetched');
-  
+        }                       
+        //console.log(res.rows);        
         resolve(res.rows);
-      })
-    })
+
+      });
+    }
+    )    
+  }
+
+  function getNCamposListosProceso(id) {    
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(url)
+      from anexo_proceso
+      inner join proceso
+      on proceso.cod_proceso = anexo_proceso.cod_proceso
+      where proceso.cod_proceso= $1
+      and url !=''`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }                       
+        //console.log(res.rows[0].count);    
+        
+        resolve(res.rows[0].count);
+
+      });
+    }
+    )    
+  }
+
+  function getAllCodProcesos() {    
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select * from proceso`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs fetched');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )    
+  }
+
+
+  function listProcesos() {    
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select cod_proceso, nom_cliente, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      from proceso
+      inner join cliente 
+      on proceso.cod_cliente = cliente.cod_cliente
+      inner join seguro
+      on proceso.cod_seguro = seguro.cod_seguro
+      inner join tipo_seguro
+      on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      inner join status
+      on proceso.cod_status = status.cod_status
+      inner join usuario
+      on proceso.cod_usuario = usuario.cod_usuario`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs fetched');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )    
   }
 
   function insertProceso(data) {
@@ -767,8 +834,10 @@ module.exports = {
   getEmpleados,
   getEmpleadoById,
   insertEmpleadoById,
-
-
+  getNCamposListosProceso,
+  getNumeroCamposSeguro,
+  listTipoSeguro,
+  getAllCodProcesos,
   insertProceso,
   insertAnexoProceso,
   listTipoSeguros
