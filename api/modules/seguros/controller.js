@@ -12,6 +12,10 @@ module.exports = function(injectedStore) {
 
         return injectedStore.listSeguros();
     }
+    async function listTipoSeguro() {
+
+        return injectedStore.listTipoSeguros();
+    }
 
     async function get(id) {
         return injectedStore.getSeguro(id);
@@ -46,6 +50,7 @@ module.exports = function(injectedStore) {
 
     return {
         list,
+        listTipoSeguro,
         insert,
         update,
         remove,
