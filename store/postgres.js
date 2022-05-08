@@ -601,7 +601,7 @@ function getNaturalezaById(id) {
 
   function listSeguros() {    
     return new Promise((resolve, reject) => {
-      client.query(`SELECT seguro.cod_seguro, seguro.cod_tipo_seguro,tipo_seguro.nom_tipo_seguro, seguro.vigencia,seguro.cod_compania, compania.nom_compania,seguro.precio
+      client.query(`SELECT seguro.cod_seguro, seguro.cod_tipo_seguro,tipo_seguro.nom_tipo_seguro, seguro.vigencia,seguro.cod_compania, compania.nom_compania,seguro.precio, seguro.descripcion, seguro.resumen
       FROM seguro  
       INNER JOIN tipo_seguro  
       ON seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
@@ -619,31 +619,26 @@ function getNaturalezaById(id) {
     })
   }
 
-   /*
-
-  Tipo Seguro
-
-  */
-
-  function listTipoSeguro() {    
+/**
+   * 
+   * Tipo seguros
+   */
+   function listTipoSeguros() {    
     return new Promise((resolve, reject) => {
-      
-      client.query(`SELECT *   
-      FROM tipo_seguro`, (err, res) => {
+      client.query(`select * from tipo_seguro`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
   
-        }                       
-        console.log(res.rows);
+        }
+        console.log('insurance type fetched');
+  
         resolve(res.rows);
-
-      });
-    }
-    )    
+      })
+    })
   }
-
   /*
+  
 
   Procesos
 
@@ -844,7 +839,8 @@ module.exports = {
   listTipoSeguro,
   getAllCodProcesos,
   insertProceso,
-  insertAnexoProceso
+  insertAnexoProceso,
+  listTipoSeguros
 
 
 }
