@@ -836,7 +836,7 @@ module.exports = {
   insertEmpleadoById,
   getNCamposListosProceso,
   getNumeroCamposSeguro,
-  listTipoSeguro,
+  listTipoSeguros,
   getAllCodProcesos,
   insertProceso,
   insertAnexoProceso,
