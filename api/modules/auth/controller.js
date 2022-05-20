@@ -1,5 +1,7 @@
 const auth = require('../../../auth/index');
 const bcrypt = require('bcrypt');
+const errors = require('../../../utils/error')
+const tokenList = {}
 
 module.exports = function(injectedStore) {
     if (!injectedStore) {
@@ -18,7 +20,16 @@ module.exports = function(injectedStore) {
             return bcrypt.compare(password, data.contrasena).then((equal) => {
 
                 if (equal) {
-                    return auth.signUser(data);
+                    const token = auth.signUser(data);
+                    const refreshToken = auth.refreshToken(data);
+                    
+                    const authResult = {
+                        "status" : "Logged In",
+                        "token" : token,
+                        "refreshToken" : refreshToken
+                    }
+                    tokenList[refreshToken] = authResult;
+                    return authResult
                 } else {
                     throw new Error('User not found');
                 }
@@ -33,6 +44,30 @@ module.exports = function(injectedStore) {
         }
 
     }
+    async function refresh(body){
+        console.log('Sup  '+body.refreshToken);
+        const refreshToken = body.refreshToken;
+        console.log(refreshToken);
+        let formatedToken = refreshToken.replace('Bearer ', '');
+        if((formatedToken) && (formatedToken in tokenList)){
+            const user = body.user;
+            const data = await injectedStore.getUserByEmail(user.email);
+            if(data){
+                const token = auth.signUser(data);
+                const refreshResult = {
+                    "status" : "Logged In",
+                    "token" : token,
+                    "refreshToken" : refreshToken
+                }
+                return refreshResult;
+            }else{
+                throw errors('Jwt Invalido', 401)
+            }
+            
+        }else{
+            throw errors('Invalid Request', 404);
+        }
+    }
 
     async function insert(authData) {
         console.log(authData);
@@ -43,7 +78,7 @@ module.exports = function(injectedStore) {
     return {
 
         insert,
-        login
+        login, refresh
 
     }
 
