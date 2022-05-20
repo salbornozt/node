@@ -2,7 +2,11 @@ const jwt = require('jsonwebtoken');
 const { Error } = require('../network/response');
 const error = require('../utils/error')
 function signUser(user) {
-    return jwt.sign(user, 'mykey');
+    return jwt.sign(user, 'mykey',{expiresIn: "14m"});
+}
+
+function refreshToken(user) {
+    return jwt.sign(user, 'myRefreshKey',{expiresIn: "30d"});
 }
 
 
@@ -26,5 +30,6 @@ function verify(req) {
 
 module.exports = {
     signUser,
-    verify
+    verify,
+    refreshToken
 }
