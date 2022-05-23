@@ -124,19 +124,23 @@ function insertUser(data) {
   });
 }
 
-function updateUser(data) {
-  console.log(data)
 
+
+function updateUser(data) {
+  //console.log(data)
+  console.log("Entro al postgres")
   return new Promise((resolve, reject) => {
-    let query = `UPDATE usuario SET nom_usuario = $1, apellido_usuario = $2, documento = $3, celular = $4, tipo_usuario= $5 WHERE cod_usuario =$6 RETURNING nom_usuario as new_usuario`
-    client.query(query, [data.name, data.lastname, data.document, data.mobile, data.user_type, data.id], (err, res) => {
+    
+    let query = `UPDATE usuario SET nom_usuario = $1, apellido_usuario=$2, celular=$3 WHERE cod_usuario =$4`
+  
+    client.query(query, [data.nom_usuario,data.apellido_usuario,data.celular,data.cod_usuario], (err, res) => {
       if (err) {
         console.log('error aqui' + err.message);
         console.error(err);
         reject(err);
       }
-      console.log("user updated" + res.rows[0]);
-      resolve(res.rows[0]);
+      console.log("user updated" + res.rows);
+      resolve(res.rows);
     })
 
   });
@@ -314,6 +318,30 @@ function insertEmpleadoById() {
   });
 }
 
+function removeUser(id) {
+
+  
+  return new Promise((resolve, reject) => {
+    let query = `delete from auth where cod_usuario = $1`
+    client.query(query, [id], (err, res) => {
+      let respuesta = {
+        isDeleted : true
+      }
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      console.log(id)
+      console.log("client removed");
+      
+
+      resolve(respuesta);
+    })
+
+  });
+}
+
+
 function removeClient(id) {
 
   
@@ -335,6 +363,7 @@ function removeClient(id) {
 
   });
 }
+
 
 function insertEmails(data) {
 
@@ -840,7 +869,9 @@ module.exports = {
   getAllCodProcesos,
   insertProceso,
   insertAnexoProceso,
-  listTipoSeguros
+  listTipoSeguros,
+  removeUser
+ 
 
 
 }

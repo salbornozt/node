@@ -48,7 +48,8 @@ router.get('/:id', secure('get'),(req, resp) => {
         response.Error(req, resp, err.message, 500);
     })
 })
-router.delete('/:id', secure('delete'), (req, resp) => {
+router.delete('/:id', (req, resp) => {
+    console.log(req.params.id)
     controller.remove(req.params.id).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((err) => {
@@ -65,12 +66,24 @@ router.post('/', (req, resp) => {
 })
 
 
-router.put('/', secure('update'), (req, resp) => {
+router.put('/',  (req, resp) => {
     controller.update(req.body).then((result) => {
         console.log('succedd'+result);
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
         console.log('error'+error);
+        response.Error(req, resp, error, 500);
+    })
+})
+
+
+router.patch('/', (req, resp) => {
+    console.log(req.body);
+    controller.update(req.body).then((result) => {
+        console.log('succedd' + result);
+        response.Sucess(req, resp, result, 200);
+    }).catch((error) => {
+        console.log('error' + error);
         response.Error(req, resp, error, 500);
     })
 })

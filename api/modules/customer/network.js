@@ -5,7 +5,7 @@ const controller = require('./index');
 const secure = require('./secure');
 
 
-router.get('/', secure('list'), (req, resp) => {
+router.get('/', (req, resp) => {
     controller.list().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
