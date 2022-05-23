@@ -63,24 +63,34 @@ module.exports = function (injectedStore) {
     }
 
     async function update(body) {
+        console.log("entra antes del postgres")
         console.log(body);
-        let userBody = body.user;
-        let usuario = {
-            id: userBody.cod_usuario,
-            name: userBody.nom_usuario,
-            lastname: userBody.apellido_usuario,
-            email: userBody.email,
-            user_type: userBody.tipo_usuario,
-            document: userBody.documento,
-            mobile: userBody.celular
-        }
+        let contactBody = body.contact;
+        let cod_usuario = body.cod_usuario;
+        let empleado = {
+            cod_usuario: contactBody.cod_usuario,
+            email: contactBody.email,
+            celular: contactBody.celular,
+            nom_usuario: contactBody.nom_usuario,  
+            apellido_usuario: contactBody.apellido_usuario
+                              
+        };
+     
+        
 
-        return injectedStore.updateUser(usuario);
+        let updateResult = await injectedStore.updateUser(empleado);
+
+       
+
+        let customerUpdated = await this.get(cod_usuario);
+
+        return customerUpdated;
 
     }
     async function remove(id) {
         return injectedStore.removeUser(id);
     }
+
 
     return {
         list,
