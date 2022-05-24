@@ -8,6 +8,7 @@ const campos = require('./modules/campos/network');
 const seguro = require('./modules/seguros/network')
 const proceso = require('./modules/procesos/network')
 const anexProceso = require('./modules/anexo_proceso/network')
+const excel = require('./modules/exports/network')
 
 
 const user = require('./modules/user/network')
@@ -35,6 +36,7 @@ app.use('/api/campos/',campos);
 app.use('/api/seguros/',seguro)
 app.use('/api/procesos/',proceso)
 app.use('/api/anexo_proceso/',anexProceso)
+app.use('/api/exports', excel)
 app.use(errors);
 
 app.listen(port, () => {
