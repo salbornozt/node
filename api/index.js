@@ -1,6 +1,7 @@
 const express = require('express');
+require('dotenv').config()
 const app = express();
-const port = 3000;
+const port = process.env.APP_PORT;
 const bodyParser = require('body-parser');
 const clients = require('./modules/customer/network');
 const naturaleza = require('./modules/naturaleza/network');
@@ -26,6 +27,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
+console.log('here '+process.env.APP_PORT)
 app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use('/api/login/', auth)

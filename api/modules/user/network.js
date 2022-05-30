@@ -76,6 +76,16 @@ router.put('/',  (req, resp) => {
     })
 })
 
+router.put('/perfil/',  (req, resp) => {
+    controller.updatePerfil(req.body).then((result) => {
+        console.log('succedd'+result);
+        response.Sucess(req, resp, result, 200);
+    }).catch((error) => {
+        console.log('error'+error);
+        response.Error(req, resp, error, 500);
+    })
+})
+
 
 router.patch('/', (req, resp) => {
     console.log(req.body);

@@ -87,6 +87,31 @@ module.exports = function (injectedStore) {
         return customerUpdated;
 
     }
+    async function updatePerfil(body) {
+        console.log("entra antes del postgres")
+        console.log(body);
+        let contactBody = body.user;
+        let cod_usuario = body.cod_usuario;
+        let empleado = {
+            cod_usuario: contactBody.cod_usuario,
+            email: contactBody.email,
+            celular: contactBody.celular,
+            nom_usuario: contactBody.nom_usuario,  
+            apellido_usuario: contactBody.apellido_usuario
+                              
+        };
+     
+        
+
+        let updateResult = await injectedStore.updateUser(empleado);
+
+       
+
+        //let customerUpdated = await this.get(cod_usuario);
+
+        return updateResult;
+
+    }
     async function remove(id) {
         return injectedStore.removeUser(id);
     }
@@ -96,6 +121,7 @@ module.exports = function (injectedStore) {
         list,
         insert,
         update,
+        updatePerfil,
         remove,
         get,
         getEmpleados,

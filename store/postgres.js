@@ -3,11 +3,11 @@ const pgp = require('pg-promise')
 const error = require('../network/errors')
 
 const client = new Client({
-  user: 'mvzvdlzsmzjcpu',
-  host: 'ec2-54-86-224-85.compute-1.amazonaws.com',
-  database: 'dcnl90uskjd2q2',
-  password: 'a61be4c1b6f897d6eb84a95f7daaf811bf9286151e26851b85abc4277c6a4c75',
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PSS,
+  port: process.env.DB_PORT,
   ssl: {
     rejectUnauthorized: false
   }
@@ -404,7 +404,7 @@ function insertCelulares(data) {
 
   return new Promise((resolve, reject) => {
     let query = `insert into celular_cliente(numero,label,cod_cliente) values ($1,$2,$3)`
-    client.query(query, [data.phoneNumber, data.label, data.cod_cliente], (err, res) => {
+    client.query(query, [data.numero, data.label, data.cod_cliente], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
