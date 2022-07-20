@@ -27,7 +27,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
 }
 
-console.log('here '+process.env.APP_PORT)
+console.log('here '+port)
 app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use('/api/login/', auth)

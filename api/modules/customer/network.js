@@ -31,6 +31,7 @@ router.delete('/', secure('delete'), (req, resp) => {
 })
 
 router.post('/', (req, resp) => {
+    console.log('here 123');
     controller.insertToGetId(req.body.customer).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {

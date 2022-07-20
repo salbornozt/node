@@ -72,6 +72,7 @@ module.exports = function (injectedStore) {
         let cod_cliente = body.id;
         let customer = {
             nom_cliente: contactBody.nom_cliente,
+            apellido_cliente: contactBody.apellido_cliente,
             ocupacion: contactBody.ocupacion,
             ciudad: contactBody.ciudad,
             direccion: contactBody.direccion,

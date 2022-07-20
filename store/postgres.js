@@ -7,10 +7,7 @@ const client = new Client({
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PSS,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  port: process.env.DB_PORT
 })
 
 client.connect(function (err) {
@@ -267,8 +264,8 @@ function insertClient(data) {
 function updateClient(id,data) {
 
   return new Promise((resolve, reject) => {
-    let query = `update cliente set nom_cliente=$1, ocupacion=$2, ciudad=$3, cedula=$4, direccion=$5, cod_naturaleza=$6, cod_tipo_cliente=$7, sexo=$8, company=$9, birth_date=$10 where cod_cliente = $11`
-    client.query(query, [data.nom_cliente, data.ocupacion, data.ciudad, data.cedula, data.direccion, data.cod_naturaleza, data.cod_tipo_cliente, data.sexo, data.company, data.birth_date, id], (err, res) => {
+    let query = `update cliente set nom_cliente=$1, ocupacion=$2, ciudad=$3, cedula=$4, direccion=$5, cod_naturaleza=$6, cod_tipo_cliente=$7, sexo=$8, company=$9, birth_date=$10,  apellido_cliente=$11 where cod_cliente = $12`
+    client.query(query, [data.nom_cliente, data.ocupacion, data.ciudad, data.cedula, data.direccion, data.cod_naturaleza, data.cod_tipo_cliente, data.sexo, data.company, data.birth_date, data.apellido_cliente, id], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -736,6 +733,39 @@ function getNaturalezaById(id) {
     )    
   }
 
+  function searchProcesos(key) {    
+    return new Promise((resolve, reject) => {
+      let newQuery = key+'%';
+      console.log('test '+newQuery);
+      
+      client.query(`select cod_proceso, nom_cliente, cliente.cedula, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      from proceso
+      inner join cliente 
+      on proceso.cod_cliente = cliente.cod_cliente
+      inner join seguro
+      on proceso.cod_seguro = seguro.cod_seguro
+      inner join tipo_seguro
+      on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      inner join status
+      on proceso.cod_status = status.cod_status
+      inner join usuario
+      on proceso.cod_usuario = usuario.cod_usuario
+      WHERE nom_cliente LIKE $1 OR apellido_cliente LIKE $1 OR  cliente.cedula LIKE $1 OR nom_tipo_seguro LIKE $1 LIMIT 10`,[newQuery], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs searched');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )    
+  }
+
 
   function listProcesos() {    
     return new Promise((resolve, reject) => {
@@ -867,6 +897,7 @@ module.exports = {
   getNumeroCamposSeguro,
   listTipoSeguros,
   getAllCodProcesos,
+  searchProcesos,
   insertProceso,
   insertAnexoProceso,
   listTipoSeguros,

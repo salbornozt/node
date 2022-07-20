@@ -50,4 +50,13 @@ router.put('/', (req, resp) => {
 })
 
 
+router.get('/search/:key',(req, resp) => {
+    controller.search(req.params.key).then((data) => {
+        response.Sucess(req, resp, data, 200);
+
+    }).catch((err) => {
+        response.Error(req, resp, err.message, 500);
+    })
+})
+
 module.exports = router;

@@ -93,12 +93,16 @@ module.exports = function (injectedStore) {
     async function remove(id) {
         return injectedStore.deleteSeguro(id);
     }
+    async function search(key){
+        return injectedStore.searchProcesos(key);
+    }
 
     return {
         list,
         insert,
         update,
         remove,
+        search,
         get
     }
 
