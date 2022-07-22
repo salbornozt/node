@@ -1,3 +1,4 @@
+const { query } = require('express');
 const express = require('express');
 const router = express.Router();
 const response = require('../../../network/response')
@@ -6,7 +7,7 @@ const secure = require('./secure');
 
 
 router.get('/', (req, resp) => {
-    controller.list().then((data) => {
+    controller.list(req.query.page).then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
         response.Error(req, resp, error.message, 500);

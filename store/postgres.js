@@ -716,32 +716,12 @@ function getNaturalezaById(id) {
     }
     )    
   }
-
-  function getAllCodProcesos() {    
-    return new Promise((resolve, reject) => {
-      
-      client.query(`select * from proceso`, (err, res) => {
-        if (err) {
-          console.error(err);
-          reject(err);
-  
-        }        
-        console.log('processs fetched');        
-        //console.log(res.rows);    
-        
-        resolve(res.rows);
-
-      });
-    }
-    )    
-  }
-
   function searchProcesos(key) {    
     return new Promise((resolve, reject) => {
-      let newQuery = key+'%';
+      let newQuery = '%'+key+'%';
       console.log('test '+newQuery);
       
-      client.query(`select cod_proceso, nom_cliente, cliente.cedula, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.cedula, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
@@ -769,22 +749,10 @@ function getNaturalezaById(id) {
     )    
   }
 
-
-  function listProcesos() {    
+  function getAllCodProcesos() {    
     return new Promise((resolve, reject) => {
       
-      client.query(`select cod_proceso, nom_cliente, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
-      from proceso
-      inner join cliente 
-      on proceso.cod_cliente = cliente.cod_cliente
-      inner join seguro
-      on proceso.cod_seguro = seguro.cod_seguro
-      inner join tipo_seguro
-      on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
-      inner join status
-      on proceso.cod_status = status.cod_status
-      inner join usuario
-      on proceso.cod_usuario = usuario.cod_usuario`, (err, res) => {
+      client.query(`select * from proceso`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -800,6 +768,57 @@ function getNaturalezaById(id) {
     )    
   }
 
+  
+  function countProcesos() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`SELECT COUNT(*) FROM proceso`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs counted');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+
+
+
+  function listProcesos(start, end) {    
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      from proceso
+      inner join cliente 
+      on proceso.cod_cliente = cliente.cod_cliente
+      inner join seguro
+      on proceso.cod_seguro = seguro.cod_seguro
+      inner join tipo_seguro
+      on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      inner join status
+      on proceso.cod_status = status.cod_status
+      inner join usuario
+      on proceso.cod_usuario = usuario.cod_usuario WHERE cod_proceso >= $1 and cod_proceso <= $2  ORDER BY cod_proceso`,[start, end], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs fetched');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )    
+  }
   function insertProceso(data) {
     
     return new Promise((resolve, reject) => {
@@ -891,7 +910,7 @@ module.exports = {
   insertClientToGetId,
   removeClient,
   listProcesos,
-
+  countProcesos,
   listAnexoProcesos,
   getEmpleados,
   getEmpleadoById,

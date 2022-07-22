@@ -10,17 +10,32 @@ module.exports = function (injectedStore) {
         throw new Error('Db error');
     }
 
-    async function list() {
+    async function list(pageNumber) {
+        console.log('pgd '+pageNumber);
 
-        let listaProcesos = await injectedStore.listProcesos();
+        
+        let lengthResult = await injectedStore.countProcesos();
+        let length = parseInt(lengthResult[0].count);
+        let pageSize =  10;
+        let page = parseInt(pageNumber);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+        let lastPage =Math.max(Math.round(length/pageSize), 1);
+        let nextPage = (page + 1);
+        let end =Math.min((pageSize * nextPage), length);
+        let begin = page * pageSize;
+        console.log((pageSize * (page + 1))+' '+pageSize+' '+nextPage+' peprpep');
 
-        let listCodProcesos = await injectedStore.getAllCodProcesos();
-
-        let listaSeguros = await injectedStore.listSeguros();
+       
        
         let cmpReq = []
         let cmpLlenos = []
         let porcentajes = []
+
+        let listaProcesos = await injectedStore.listProcesos(begin + 1,end);
+
+        let listCodProcesos = await injectedStore.listProcesos(begin + 1,end);
+
+        let listaSeguros = await injectedStore.listSeguros();
+
 
 
         for (let index = 0; index < listaSeguros.length; index++) {
@@ -53,13 +68,24 @@ module.exports = function (injectedStore) {
 
         
 
-        console.log(cmpLlenos);
+        /*console.log(cmpLlenos);
         console.log(cmpReq);      
         console.log(porcentajes); 
-        console.log(listaProcesos)
+        console.log(listaProcesos)*/
+        let results = {
+            pagination : {
+                length :  length,
+                size : pageSize,
+                page : page,
+                lastPage : lastPage,
+                startIndex : begin,
+                endIndex : end - 1
+            },
+            process : listaProcesos
+        }
 
 
-        return listaProcesos;
+        return results;
     }
 
     async function get(id) {
