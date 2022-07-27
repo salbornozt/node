@@ -836,6 +836,30 @@ function getNaturalezaById(id) {
     });
   }
 
+  function getProcesoById(id) {
+
+    return new Promise((resolve, reject) => {
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      inner join cliente 
+      on proceso.cod_cliente = cliente.cod_cliente
+      inner join seguro
+      on proceso.cod_seguro = seguro.cod_seguro
+      inner join tipo_seguro
+      on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      inner join status
+      on proceso.cod_status = status.cod_status
+      inner join usuario
+      on proceso.cod_usuario = usuario.cod_usuario WHERE cod_proceso = $1`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
   /*
 
   Anexos Procesos
@@ -870,7 +894,209 @@ function getNaturalezaById(id) {
       })
     })
   }
- 
+
+  /*
+
+  COMPÁÑIA
+
+  */
+
+  function listCompania() {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from compania`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('compania fetched');
+  
+        resolve(res.rows);
+      })
+    })
+  }
+
+  function getCompaniaById(id) {
+    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from compania WHERE cod_compania=$1`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function insertCompania(campo) {    
+    return new Promise((resolve, reject) => {
+      client.query(`insert into compania(nom_compania,direccion_compania) values ($1,$2) RETURNING cod_compania`,[campo.nom_compania, campo.direccion_compania], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('Anex processs inserted');
+  
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function updateCompania(data) {
+  
+  
+    return new Promise((resolve, reject) => {
+      
+      let query = `UPDATE compania SET nom_compania = $1 WHERE cod_compania =$2`
+    
+      client.query(query, [data.nom_compania,data.cod_compania], (err, res) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("user updated" + res.rows);
+        resolve(res.rows);
+      })
+  
+    });
+  }
+ /**
+  * ramo
+  */
+
+  function listRamo() {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from ramo`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('compania fetched');
+  
+        resolve(res.rows);
+      })
+    })
+  }
+
+  function getRamoByCompany(id) {
+    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from ramo WHERE cod_compania=$1`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function insertRamo(campo) {    
+    return new Promise((resolve, reject) => {
+      client.query(`insert into ramo(nom_ramo,cod_compania) values ($1,$2) RETURNING cod_ramo`,[campo.nom_ramo, campo.cod_compania], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+  
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function updateRamo(data) {
+  
+  
+    return new Promise((resolve, reject) => {
+      
+      let query = `UPDATE ramo SET nom_ramo = $1 WHERE cod_ramo =$2`
+    
+      client.query(query, [data.nom_ramo,data.cod_ramo], (err, res) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("ramo updated" + res.rows);
+        resolve(res.rows);
+      })
+  
+    });
+  }
+
+  /**
+   * producto
+   */
+
+
+   function listProducto() {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from producto`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+  
+        resolve(res.rows);
+      })
+    })
+  }
+
+  function getProductoByRamo(id) {
+    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from producto WHERE cod_ramo=$1`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function insertProducto(campo) {    
+    return new Promise((resolve, reject) => {
+      client.query(`insert into producto(nom_producto,cod_ramo) values ($1,$2) RETURNING cod_producto`,[campo.nom_ramo, campo.cod_ramo], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+  
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function updateProducto(data) {
+  
+  
+    return new Promise((resolve, reject) => {
+      
+      let query = `UPDATE producto SET nom_producto = $1 WHERE cod_producto =$2`
+    
+      client.query(query, [data.nom_producto,data.cod_producto], (err, res) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("ramo updated" + res.rows);
+        resolve(res.rows);
+      })
+  
+    });
+  }
   
 
 module.exports = {
@@ -921,10 +1147,21 @@ module.exports = {
   getAllCodProcesos,
   searchProcesos,
   insertProceso,
+  getProcesoById,
   insertAnexoProceso,
   listTipoSeguros,
-  removeUser
- 
-
+  removeUser,
+  listCompania,
+  insertCompania,
+  getCompaniaById,
+  updateCompania,
+  listRamo,
+  getRamoByCompany,
+  insertRamo,
+  updateRamo,
+  listProducto,
+  getProductoByRamo,
+  insertProducto,
+  updateProducto
 
 }

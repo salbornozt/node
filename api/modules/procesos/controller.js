@@ -89,7 +89,58 @@ module.exports = function (injectedStore) {
     }
 
     async function get(id) {
-        return injectedStore.getSeguro(id);
+        console.log('myID '+id);
+
+        let proceso = await injectedStore.getProcesoById(id);
+        let results = {
+            category : "abierto",
+            proceso : proceso,
+            id : "3",
+            progress :  {
+                completed : 3,
+                currentStep : 0
+            },
+            steps :[
+                {
+                    order   : 0,
+                    title   : 'Resumen',
+                    subtitle: 'Resumen del proceso',
+                    content : ''
+                },
+                {
+                    order   : 1,
+                    title   : 'Iniciación',
+                    subtitle: 'Where to find the sample code and how to access it',
+                    content : ''
+                },
+                {
+                    order   : 2,
+                    title   : 'Cotización',
+                    subtitle: 'How to create a basic Firebase project and how to run it locally',
+                    content : ''
+                },
+                {
+                    order   : 3,
+                    title   : 'Negociación',
+                    subtitle: 'Setting up the Firebase CLI to access command line tools',
+                    content : ''
+                },
+                {
+                    order   : 4,
+                    title   : 'Recabación de los documentos',
+                    subtitle: 'How to build, push and run the project remotely',
+                    content : ''
+                },
+                {
+                    order   : 5,
+                    title   : 'Seguimiento',
+                    subtitle: 'Introducing the Functions and Functions Directory',
+                    content : ''
+                }
+            ],
+            totalSteps : 6
+        }
+        return results;
     }
 
 
