@@ -840,6 +840,7 @@ function getNaturalezaById(id) {
 
     return new Promise((resolve, reject) => {
       client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
       inner join seguro
