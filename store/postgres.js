@@ -993,7 +993,7 @@ function getNaturalezaById(id) {
           reject(err);
   
         }
-        resolve(res.rows[0]);
+        resolve(res.rows);
       })
     })
   }
@@ -1060,7 +1060,7 @@ function getNaturalezaById(id) {
           reject(err);
   
         }
-        resolve(res.rows[0]);
+        resolve(res.rows);
       })
     })
   }
@@ -1094,6 +1094,87 @@ function getNaturalezaById(id) {
         }
         console.log("ramo updated" + res.rows);
         resolve(res.rows);
+      })
+  
+    });
+  }
+
+  /**
+   * cotizacion
+   * @returns 
+   */
+
+  function listCotizacionPorProceso(id) {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from cotizacion WHere cod_proceso = $1`,[id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+  
+        resolve(res.rows);
+      })
+    })
+  }
+
+  function insertCotizacion(campo) {    
+    return new Promise((resolve, reject) => {
+      client.query(`insert into cotizacion(cod_proceso,cod_compania,cod_ramo,cod_producto,numero_cotizacion,fecha_creada,valor) values ($1,$2,$3,$4,$5,$6,$7) RETURNING cod_cotizacion`,[campo.cod_proceso, campo.cod_compania, campo.cod_ramo,campo.cod_producto,campo.numero_cotizacion,campo.fecha_creada,campo.valor], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+  
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function updateCotizacion(data) {
+  
+    console.log(data.cod_cotizacion);
+    return new Promise((resolve, reject) => {
+      
+      let query = `UPDATE cotizacion SET cod_compania = $1, cod_ramo = $2, cod_producto = $3, numero_cotizacion = $4, fecha_creada = $5, valor = $6 WHERE cod_cotizacion = $7`
+    
+      client.query(query, [data.cod_compania,data.cod_ramo,data.cod_producto,data.numero_cotizacion,data.fecha_creada,data.valor,data.cod_cotizacion], (err, res) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("ramo updated" + res.rows);
+        resolve(res.rows);
+      })
+  
+    });
+  }
+
+  function deleteCotizacion(cod) {
+
+
+    return new Promise((resolve, reject) => {
+      let query = `delete from cotizacion where cod_cotizacion=$1`
+      client.query(query, [cod], (err, res) => {
+        let isDeleted = true;
+        
+        if (err) {
+          console.error(err);
+          isDeleted = false
+          let respuesta = {
+            isDeleted : isDeleted
+          }
+          reject(respuesta);
+        }
+        let respuesta = {
+          isDeleted : isDeleted
+        }
+        console.log("client removed");
+        
+  
+        resolve(respuesta);
       })
   
     });
@@ -1163,6 +1244,10 @@ module.exports = {
   listProducto,
   getProductoByRamo,
   insertProducto,
-  updateProducto
+  updateProducto,
+  listCotizacionPorProceso,
+  insertCotizacion,
+  updateCotizacion,
+  deleteCotizacion
 
 }
