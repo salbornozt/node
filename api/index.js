@@ -12,6 +12,7 @@ const anexProceso = require('./modules/anexo_proceso/network')
 const compania = require('./modules/compania/network')
 const ramo = require('./modules/ramo/network')
 const producto = require('./modules/producto/network')
+const cotizacion = require('./modules/cotizacion/network')
 const excel = require('./modules/exports/network')
 
 
@@ -44,6 +45,7 @@ app.use('/api/anexo_proceso/',anexProceso)
 app.use('/api/compania/',compania)
 app.use('/api/ramo/',ramo)
 app.use('/api/producto/',producto)
+app.use('/api/cotizacion/',cotizacion)
 app.use('/api/exports', excel)
 app.use(errors);
 
