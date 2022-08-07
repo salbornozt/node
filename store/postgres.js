@@ -1179,7 +1179,66 @@ function getNaturalezaById(id) {
   
     });
   }
+
+  /**
+   * seguimiento
+   */
+
+   function insertSeguimiento(campo) {    
+    return new Promise((resolve, reject) => {
+      let query = `insert into seguimiento_por_proceso(cod_proceso) values ($1) RETURNING cod_seguimiento`
+      client.query(query,[campo.cod_proceso], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
   
+        }
+  
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  /**
+   * poliza
+   */
+   function insertPoliza(campo) {    
+    return new Promise((resolve, reject) => {
+      let query = `insert into poliza(cod_seguimiento,cod_compania,cod_ramo,cod_producto,fecha_creada,fecha_expedicion,link,fecha_vigencia_desde,fecha_vigencia_hasta,valor_total,numero_poliza) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING cod_poliza`
+      client.query(query,[campo.cod_seguimiento, campo.cod_compania, campo.cod_ramo,campo.cod_producto,campo.fecha_creada,campo.fecha_expedicion,campo.link,campo.fecha_vigencia_desde,campo.fecha_vigencia_hasta,campo.valor_total,campo.numero_poliza], (err, res) => {
+
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+  
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function getPolizaByProceso(id) {
+    
+    return new Promise((resolve, reject) => {
+      let query = `select proceso.cod_proceso, poliza.cod_seguimiento, cod_poliza, cod_compania, cod_ramo, cod_producto, fecha_creada, fecha_expedicion, link, fecha_vigencia_desde, fecha_vigencia_hasta, valor_total, numero_poliza
+      from proceso
+            inner join seguimiento_por_proceso 
+            on proceso.cod_proceso = seguimiento_por_proceso.cod_proceso
+            inner join poliza
+            on poliza.cod_seguimiento = seguimiento_por_proceso.cod_seguimiento
+            WHERE proceso.cod_proceso = $1 order by fecha_expedicion 
+      `
+      client.query(query, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        resolve(res.rows);
+      })
+    })
+  }
 
 module.exports = {
   list,
@@ -1248,6 +1307,9 @@ module.exports = {
   listCotizacionPorProceso,
   insertCotizacion,
   updateCotizacion,
-  deleteCotizacion
+  deleteCotizacion,
+  insertSeguimiento,
+  insertPoliza,
+  getPolizaByProceso
 
 }

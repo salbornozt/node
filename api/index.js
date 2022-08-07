@@ -13,6 +13,7 @@ const compania = require('./modules/compania/network')
 const ramo = require('./modules/ramo/network')
 const producto = require('./modules/producto/network')
 const cotizacion = require('./modules/cotizacion/network')
+const seguimiento = require('./modules/seguimiento/network')
 const excel = require('./modules/exports/network')
 
 
@@ -46,6 +47,7 @@ app.use('/api/compania/',compania)
 app.use('/api/ramo/',ramo)
 app.use('/api/producto/',producto)
 app.use('/api/cotizacion/',cotizacion)
+app.use('/api/seguimiento/',seguimiento)
 app.use('/api/exports', excel)
 app.use(errors);
 

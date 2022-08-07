@@ -98,7 +98,7 @@ module.exports = function (injectedStore) {
             id : "3",
             progress :  {
                 completed : 3,
-                currentStep : 2
+                currentStep : 5
             },
             steps :[
                 {
