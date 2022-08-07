@@ -4,8 +4,10 @@ const response = require('../../../network/response')
 const controller = require('./index');
 
 
-router.post('/', (req, resp) => {
-    controller.excel(req.body).then((data) => {
+
+
+router.get('/', (req, resp) => {
+    controller.list().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
         response.Error(req, resp, error.message, 500);
