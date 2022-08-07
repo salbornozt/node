@@ -166,6 +166,28 @@ function insertAuth(data) {
  * CLIENTES
  */
 
+ function listClientsExport() {
+ 
+
+  return new Promise((resolve, reject) => {
+    client.query(
+    `select nom_cliente, apellido_cliente, ocupacion, company, direccion,email, numero from cliente, email_cliente, celular_cliente
+    where 
+	    cliente.cod_cliente = email_cliente.cod_cliente and
+	    cliente.cod_cliente = celular_cliente.cod_cliente
+    `, (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      console.log('cliets fetched');
+
+      resolve(res.rows);
+    })
+  })
+}
+
 
 function listClients() {
   var data = "*"
@@ -1267,7 +1289,7 @@ module.exports = {
 
 
   getCamposPorSeguro,
-
+  listClientsExport,
   listCampos,
   insertSeguro,
   updateSeguro,
