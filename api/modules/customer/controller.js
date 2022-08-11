@@ -63,7 +63,13 @@ module.exports = function (injectedStore) {
 
     async function insertToGetId() {
 
-        return injectedStore.insertClientToGetId();
+        let custom = await injectedStore.insertClientToGetId();
+        console.log("----------->"+custom.cod_cliente);
+        await injectedStore.insertRelatives(custom.cod_cliente);   
+        await injectedStore.insertRelatives(custom.cod_cliente);   
+        await injectedStore.insertRelatives(custom.cod_cliente);   
+        return custom
+
     }
 
     async function update(body) {
@@ -108,6 +114,7 @@ module.exports = function (injectedStore) {
 
     }
     async function remove(id) {
+        await injectedStore.deleteRelatives(id);
         return injectedStore.removeClient(id);
     }
 
