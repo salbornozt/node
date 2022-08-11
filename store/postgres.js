@@ -161,6 +161,122 @@ function insertAuth(data) {
   });
 }
 
+/**
+ * 
+ * RELATIVES
+ * 
+ */
+
+function listRelatives(id){
+  return new Promise((resolve, reject) => {
+    client.query(
+    `select * from pariente where cod_cliente = $1 order by cod_pariente`,[id] ,(err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      console.log('relatives fetched');
+
+      resolve(res.rows);
+    })
+  })
+}
+
+function deleteRelatives(clienteId){
+  return new Promise((resolve, reject) => {
+    client.query(
+    `delete from pariente where cod_cliente=$1`,[clienteId] ,(err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      console.log('relatives deleted');
+
+      resolve(res);
+    })
+  })
+}
+
+function insertRelatives(parienteId){
+  return new Promise((resolve, reject) => {
+    client.query(
+    `insert into pariente(cod_cliente,nom_pariente,apellido_pariente) values ($1,$2,$3) `,
+    [parienteId,"",""], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      console.log('relatives fetched');
+
+      resolve(res);
+    })
+  })
+}
+
+function updateRelatives1( relatives ){
+
+  console.log("ACAAAAAA>>>>>>>>>>>>>>>>>"+relatives.cod_pariente1);
+  
+  return new Promise((resolve, reject) => {
+    client.query(
+    `update pariente set nom_pariente = $1 ,apellido_pariente = $2, telefono_pariente=$3 where cod_pariente = $4`,
+    [relatives.nom_pariente1,relatives.apellido_pariente1,relatives.telefono_pariente1,relatives.cod_pariente1], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      console.log('relatives updated');
+
+      resolve(res);
+    })
+  })
+}
+
+function updateRelatives2( relatives ){
+
+  console.log("ACAAAAAA>>>>>>>>>>>>>>>>>"+relatives.cod_pariente1);
+  
+  return new Promise((resolve, reject) => {
+    client.query(
+    `update pariente set nom_pariente = $1 ,apellido_pariente = $2, telefono_pariente=$3 where cod_pariente = $4`,
+    [relatives.nom_pariente2,relatives.apellido_pariente2,relatives.telefono_pariente2,relatives.cod_pariente2], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      console.log('relatives updated');
+
+      resolve(res);
+    })
+  })
+}
+
+function updateRelatives3( relatives ){
+
+  console.log("ACAAAAAA>>>>>>>>>>>>>>>>>"+relatives.cod_pariente1);
+  
+  return new Promise((resolve, reject) => {
+    client.query(
+    `update pariente set nom_pariente = $1 ,apellido_pariente = $2, telefono_pariente=$3 where cod_pariente = $4`,
+    [relatives.nom_pariente3,relatives.apellido_pariente3,relatives.telefono_pariente3,relatives.cod_pariente3], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      console.log('relatives updated');
+
+      resolve(res);
+    })
+  })
+}
+
+
 
 /***
  * CLIENTES
@@ -1313,7 +1429,12 @@ module.exports = {
   insertDocumento,
   updateDocumento,
   deleteDocumento,
-
+  listRelatives,
+  insertRelatives,
+  updateRelatives1,
+  updateRelatives2,
+  updateRelatives3,
+  deleteRelatives,
 
   getCamposPorSeguro,
   listClientsExport,
