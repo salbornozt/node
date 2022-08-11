@@ -903,9 +903,36 @@ function getNaturalezaById(id) {
       })
     })
   }
+  function getAnexoByProceso(id) {    
+    return new Promise((resolve, reject) => {
+      client.query(`select * from anexo_proceso where cod_proceso = $1 order by cod_anexo_proceso`, [id], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }  
+        resolve(res.rows);
+      })
+    })
+  }
   function insertAnexoProceso(campo) {    
     return new Promise((resolve, reject) => {
-      client.query(`insert into anexo_proceso(cod_proceso,valor,url) values ($1,$2,$3) RETURNING cod_anexo_proceso`,[campo.cod_proceso, campo.valor, campo.url], (err, res) => {
+      client.query(`insert into anexo_proceso(cod_proceso,valor,url,etiqueta) values ($1,$2,$3,$4) RETURNING cod_anexo_proceso`,[campo.cod_proceso, campo.valor, campo.url, campo.name], (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }
+        console.log('Anex processs inserted');
+  
+        resolve(res.rows[0]);
+      })
+    })
+  }
+
+  function updateAnexoProceso(campo) {    
+    return new Promise((resolve, reject) => {
+      client.query(`update anexo_proceso set valor = $1, url = $2 where cod_anexo_proceso = $3`,[campo.valor, campo.url, campo.cod_anexo_proceso], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1243,7 +1270,7 @@ function getNaturalezaById(id) {
   function getPolizaByProceso(id) {
     
     return new Promise((resolve, reject) => {
-      let query = `select proceso.cod_proceso, poliza.cod_seguimiento, cod_poliza, cod_compania, cod_ramo, cod_producto, fecha_creada, fecha_expedicion, link, fecha_vigencia_desde, fecha_vigencia_hasta, valor_total, numero_poliza
+      let query = `select proceso.cod_proceso, poliza.cod_seguimiento, poliza.cod_poliza, poliza.cod_compania, poliza.cod_ramo, poliza.cod_producto, fecha_creada, fecha_expedicion, link, fecha_vigencia_desde, fecha_vigencia_hasta, valor_total, numero_poliza
       from proceso
             inner join seguimiento_por_proceso 
             on proceso.cod_proceso = seguimiento_por_proceso.cod_proceso
@@ -1301,6 +1328,7 @@ module.exports = {
   listProcesos,
   countProcesos,
   listAnexoProcesos,
+  getAnexoByProceso,
   getEmpleados,
   getEmpleadoById,
   insertEmpleadoById,
@@ -1312,6 +1340,7 @@ module.exports = {
   insertProceso,
   getProcesoById,
   insertAnexoProceso,
+  updateAnexoProceso,
   listTipoSeguros,
   removeUser,
   listCompania,
