@@ -121,24 +121,18 @@ module.exports = function (injectedStore) {
                 },
                 {
                     order   : 3,
-                    title   : 'Negociación',
-                    subtitle: 'Setting up the Firebase CLI to access command line tools',
-                    content : ''
-                },
-                {
-                    order   : 4,
                     title   : 'Recabación de los documentos',
                     subtitle: 'How to build, push and run the project remotely',
                     content : ''
                 },
                 {
-                    order   : 5,
+                    order   : 4,
                     title   : 'Seguimiento',
                     subtitle: 'Introducing the Functions and Functions Directory',
                     content : ''
                 }
             ],
-            totalSteps : 6
+            totalSteps : 5
         }
         return results;
     }

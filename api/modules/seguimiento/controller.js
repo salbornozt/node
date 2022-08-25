@@ -27,7 +27,7 @@ module.exports = function(injectedStore) {
         if(insertResult){
             const poliza = {
                 cod_seguimiento : insertResult.cod_seguimiento,
-                fecha_creada:  new Date().toLocaleDateString('en-US'),
+                fecha_creada:  body.fecha_expedicion,
                 fecha_expedicion: body.fecha_expedicion,
                 fecha_vigencia_hasta: body.fecha_vigencia_hasta,
                 fecha_vigencia_desde: body.fecha_vigencia_desde,
