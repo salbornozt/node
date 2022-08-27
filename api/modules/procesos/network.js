@@ -15,6 +15,24 @@ router.get('/', (req, resp) => {
 
 });
 
+router.get('/renovar', (req, resp) => {
+    controller.getResume().then((data) => {
+        response.Sucess(req, resp, data, 200);
+    }).catch((error) => {
+        response.Error(req, resp, error.message, 500);
+    })
+
+});
+
+router.get('/panel', (req, resp) => {
+    controller.getPannelData().then((data) => {
+        response.Sucess(req, resp, data, 200);
+    }).catch((error) => {
+        response.Error(req, resp, error.message, 500);
+    })
+
+});
+
 router.get('/:id',(req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
