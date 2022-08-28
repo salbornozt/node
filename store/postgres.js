@@ -309,7 +309,7 @@ function listClients() {
   var data = "*"
   var table = "cliente"
   return new Promise((resolve, reject) => {
-    client.query(`select ${data} from ${table}`, (err, res) => {
+    client.query(`select ${data} from ${table} order by nom_cliente`, (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -388,8 +388,8 @@ function getClientPhones(id) {
 function insertClient(data) {
 
   return new Promise((resolve, reject) => {
-    let query = `insert into cliente(nom_cliente,ocupacion,ciudad,cedula,direccion,cod_naturaleza,cod_tipo_cliente,sexo,birth_date,company) values ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING cod_cliente`
-    client.query(query, [data.nom_cliente, data.ocupacion, data.ciudad, data.cedula, data.direccion, data.cod_naturaleza, data.cod_tipo_cliente, data.sexo, data.birth_date, data.company], (err, res) => {
+    let query = `insert into cliente(nom_cliente,ocupacion,ciudad,cedula,direccion,cod_naturaleza,cod_tipo_cliente,sexo,birth_date,company,fecha_creacion) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING cod_cliente`
+    client.query(query, [data.nom_cliente, data.ocupacion, data.ciudad, data.cedula, data.direccion, data.cod_naturaleza, data.cod_tipo_cliente, data.sexo, data.birth_date, data.company, data.fecha_creacion], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -403,10 +403,10 @@ function insertClient(data) {
 }
 
 function updateClient(id,data) {
-
+  const time = new Date().toISOString();
   return new Promise((resolve, reject) => {
-    let query = `update cliente set nom_cliente=$1, ocupacion=$2, ciudad=$3, cedula=$4, direccion=$5, cod_naturaleza=$6, cod_tipo_cliente=$7, sexo=$8, company=$9, birth_date=$10,  apellido_cliente=$11 where cod_cliente = $12`
-    client.query(query, [data.nom_cliente, data.ocupacion, data.ciudad, data.cedula, data.direccion, data.cod_naturaleza, data.cod_tipo_cliente, data.sexo, data.company, data.birth_date, data.apellido_cliente, id], (err, res) => {
+    let query = `update cliente set nom_cliente=$1, ocupacion=$2, ciudad=$3, cedula=$4, direccion=$5, cod_naturaleza=$6, cod_tipo_cliente=$7, sexo=$8, company=$9, birth_date=$10,  apellido_cliente=$11, fecha_actualizacion=$12 where cod_cliente = $13`
+    client.query(query, [data.nom_cliente, data.ocupacion, data.ciudad, data.cedula, data.direccion, data.cod_naturaleza, data.cod_tipo_cliente, data.sexo, data.company, data.birth_date, data.apellido_cliente,time, id], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -419,11 +419,11 @@ function updateClient(id,data) {
   });
 }
 function insertClientToGetId() {
-
+  const time = new Date().toISOString();
   let name = "Nuevo Cliente";
   return new Promise((resolve, reject) => {
-    let query = `insert into cliente(nom_cliente) values ($1) RETURNING cod_cliente`
-    client.query(query, [name], (err, res) => {
+    let query = `insert into cliente(nom_cliente,fecha_creacion) values ($1,$2) RETURNING cod_cliente`
+    client.query(query, [name,time], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -977,7 +977,7 @@ function getNaturalezaById(id) {
   function getProcesoById(id) {
 
     return new Promise((resolve, reject) => {
-      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, status.cod_status, nom_usuario, fecha_inicio
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
@@ -997,6 +997,37 @@ function getNaturalezaById(id) {
         resolve(res.rows[0]);
       })
     })
+  }
+
+  function listProcesosPorVencerce() {    
+    
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select proceso.cod_proceso, nom_cliente, apellido_cliente, nom_tipo_seguro, fecha_vigencia_hasta, numero_poliza  from poliza 
+      inner join seguimiento_por_proceso 
+      on poliza.cod_seguimiento = seguimiento_por_proceso.cod_seguimiento
+      inner join proceso 
+      on proceso.cod_proceso = seguimiento_por_proceso.cod_proceso
+      inner join cliente
+      on proceso.cod_cliente = cliente.cod_cliente
+      inner join seguro
+      on proceso.cod_seguro = seguro.cod_seguro
+      inner join tipo_seguro
+on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '5 days'`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs fetched');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )    
   }
 
   /*
@@ -1405,6 +1436,162 @@ function getNaturalezaById(id) {
     })
   }
 
+  /**
+   * metricas
+   */
+   function countProcesosMesActual() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from proceso where fecha_inicio >= date_trunc('month', CURRENT_DATE)`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+  function countProcesosMesPasado() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from proceso where  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
+      and fecha_inicio < date_trunc('month', current_date)`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+  function countCotizacionesMesActual() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from proceso where cod_status = 2 and  fecha_inicio >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+  function countCotizacionesMesPasado() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from proceso where cod_status = 2 and  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
+      and fecha_inicio < date_trunc('month', current_date)`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+
+
+  function countSeguimientoMesActual() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from proceso where cod_status = 3 and  fecha_inicio >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+  function countSeguimientoMesPasado() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from proceso where cod_status = 3 and  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
+      and fecha_inicio < date_trunc('month', current_date)`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+
+  function countClientesMesActual() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from cliente where fecha_creacion >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+  function countClientesMesPasado() {
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select count(*) from cliente where fecha_creacion >= date_trunc('month', current_date - interval '1' month)
+      and fecha_creacion < date_trunc('month', current_date)`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+                
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+
+
 module.exports = {
   list,
   get,
@@ -1482,6 +1669,15 @@ module.exports = {
   deleteCotizacion,
   insertSeguimiento,
   insertPoliza,
-  getPolizaByProceso
+  getPolizaByProceso,
+  listProcesosPorVencerce,
+  countProcesosMesActual,
+  countProcesosMesPasado,
+  countCotizacionesMesActual,
+  countCotizacionesMesPasado,
+  countSeguimientoMesActual,
+  countSeguimientoMesPasado,
+  countClientesMesActual,
+  countClientesMesPasado
 
 }

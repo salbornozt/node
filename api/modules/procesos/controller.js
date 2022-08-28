@@ -88,6 +88,10 @@ module.exports = function (injectedStore) {
         return results;
     }
 
+    async function getResume(){
+        return injectedStore.listProcesosPorVencerce();
+    }
+
     async function get(id) {
         console.log('myID '+id);
 
@@ -168,13 +172,38 @@ module.exports = function (injectedStore) {
         return injectedStore.searchProcesos(key);
     }
 
+    async function getPannelData(){
+        let procesoActual = await injectedStore.countProcesosMesActual();
+        let procesoPasado = await injectedStore.countProcesosMesPasado();
+        let cotiActual = await injectedStore.countCotizacionesMesActual();
+        let cotiPasado = await injectedStore.countCotizacionesMesPasado();
+        let seguiActual = await injectedStore.countSeguimientoMesActual();
+        let seguiPasado = await injectedStore.countSeguimientoMesPasado();
+        let clienteActual = await injectedStore.countClientesMesActual();
+        let clientePasado = await injectedStore.countClientesMesPasado();
+        const result = {
+            proceso_actual : procesoActual,
+            proceso_pasado : procesoPasado,
+            cotizacion_actual : cotiActual,
+            cotizacion_pasado : cotiPasado,
+            seguimiento_actual : seguiActual,
+            seguimiento_pasado : seguiPasado,
+            clientes_actual : clienteActual,
+            clientes_pasado : clientePasado
+        }
+
+        return result;
+    }
+
     return {
         list,
         insert,
         update,
         remove,
         search,
-        get
+        get,
+        getResume,
+        getPannelData
     }
 
 }
