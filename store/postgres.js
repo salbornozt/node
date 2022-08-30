@@ -958,10 +958,10 @@ function getNaturalezaById(id) {
     )    
   }
   function insertProceso(data) {
-    
+    const time = new Date().toISOString();
     return new Promise((resolve, reject) => {
       let query = `insert into proceso(cod_seguro,cod_usuario,cod_cliente,cod_status,fecha_inicio,fecha_final) values ($1,$2,$3,$4,$5,$6) RETURNING cod_proceso`
-      client.query(query, [data.cod_seguro, data.cod_usuario, data.cod_cliente, data.cod_status, data.fecha_inicio, data.fecha_final], (err, res) => {
+      client.query(query, [data.cod_seguro, data.cod_usuario, data.cod_cliente, data.cod_status, data.fecha_inicio, time], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1028,6 +1028,23 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
       });
     }
     )    
+  }
+
+  function updateStatus(status, cod){
+    const time = new Date().toISOString();
+    return new Promise((resolve, reject) => {
+      let query = `UPDATE proceso SET cod_status = $1, fecha_inicio = $3 WHERE cod_proceso = $2`
+      client.query(query, [status,cod, time], (err, res) => {
+        if (err) {
+          console.log('status aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("status updated" + res.rows);
+        resolve(res.rows);
+      })
+  
+    });
   }
 
   /*
@@ -1302,7 +1319,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
 
   function listCotizacionPorProceso(id) {    
     return new Promise((resolve, reject) => {
-      client.query(`select * from cotizacion WHere cod_proceso = $1`,[id], (err, res) => {
+      client.query(`select * from cotizacion WHere cod_proceso = $1 order by cod_cotizacion`,[id], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1518,7 +1535,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
   function countSeguimientoMesActual() {
     return new Promise((resolve, reject) => {
       
-      client.query(`select count(*) from proceso where cod_status = 3 and  fecha_inicio >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
+      client.query(`select count(*) from proceso where cod_status = 4 and  fecha_inicio >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1536,7 +1553,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
   function countSeguimientoMesPasado() {
     return new Promise((resolve, reject) => {
       
-      client.query(`select count(*) from proceso where cod_status = 3 and  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
+      client.query(`select count(*) from proceso where cod_status = 4 and  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
       and fecha_inicio < date_trunc('month', current_date)`, (err, res) => {
         if (err) {
           console.error(err);
@@ -1590,6 +1607,32 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     }
     )   
   }
+
+  function updatePoliza(cod_poliza,data) {
+  
+    console.log(data.cod_cotizacion);
+    return new Promise((resolve, reject) => {
+      
+      let query = `UPDATE poliza SET fecha_expedicion = $1, 
+      fecha_vigencia_hasta = $2, 
+      fecha_vigencia_desde = $3, 
+      numero_poliza = $4, 
+      valor_total = $5, 
+      link = $6 WHERE cod_poliza = $7`
+    
+      client.query(query, [data.fecha_expedicion,data.fecha_vigencia_hasta,data.fecha_vigencia_desde,data.numero_poliza,data.valor_total,data.link,cod_poliza], (err, res) => {
+        if (err) {
+          console.log('error aqui' + err.message);
+          console.error(err);
+          reject(err);
+        }
+        console.log("ramo updated" + res.rows);
+        resolve(res.rows);
+      })
+  
+    });
+  }
+
 
 
 module.exports = {
@@ -1671,6 +1714,7 @@ module.exports = {
   insertPoliza,
   getPolizaByProceso,
   listProcesosPorVencerce,
+  updateStatus,
   countProcesosMesActual,
   countProcesosMesPasado,
   countCotizacionesMesActual,
@@ -1678,6 +1722,7 @@ module.exports = {
   countSeguimientoMesActual,
   countSeguimientoMesPasado,
   countClientesMesActual,
-  countClientesMesPasado
+  countClientesMesPasado,
+  updatePoliza
 
 }

@@ -47,18 +47,17 @@ module.exports = function(injectedStore) {
     }
 
     async function update(body) {     
-        console.log('que pista pa '+ body.numero_cotizacion);         
-        let cotizacion = {
-            cod_proceso: body.cod_proceso,
-            cod_compania : body.cod_compania,
-            cod_ramo : body.cod_ramo,
-            cod_producto : body.cod_producto,
-            numero_cotizacion : body.numero_cotizacion,
-            fecha_creada : body.fecha_creada,
-            valor : body.valor,
-            cod_cotizacion : body.cod_cotizacion
+        
+        let poliza = {
+            fecha_expedicion: body.fecha_expedicion,
+            fecha_vigencia_hasta : body.fecha_vigencia_hasta,
+            fecha_vigencia_desde : body.fecha_vigencia_desde,
+            numero_poliza : body.numero_poliza,
+            valor_total : body.valor_total,
+            link : body.link
         }
-        return injectedStore.updateCotizacion(cotizacion);
+        console.log('que pista pa seguimiento'+ poliza);         
+        return injectedStore.updatePoliza(body.cod_poliza,poliza);
 
     }
     async function remove(id) {

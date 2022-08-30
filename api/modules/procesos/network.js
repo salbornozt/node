@@ -78,4 +78,14 @@ router.get('/search/:key',(req, resp) => {
     })
 })
 
+router.patch('/status', (req, resp) => {
+    controller.updateStatus(req.body).then((result) => {
+        console.log('succedd'+result);
+        response.Sucess(req, resp, result, 200);
+    }).catch((error) => {
+        console.log('error'+error);
+        response.Error(req, resp, error, 500);
+    })
+})
+
 module.exports = router;
