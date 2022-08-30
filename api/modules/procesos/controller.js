@@ -102,7 +102,7 @@ module.exports = function (injectedStore) {
             id : "3",
             progress :  {
                 completed : 3,
-                currentStep : 0
+                currentStep : proceso.cod_status
             },
             steps :[
                 {
@@ -195,6 +195,11 @@ module.exports = function (injectedStore) {
         return result;
     }
 
+    async function updateStatus(body){
+        return injectedStore.updateStatus(body.cod_status, body.cod_proceso);
+
+    }
+
     return {
         list,
         insert,
@@ -203,7 +208,8 @@ module.exports = function (injectedStore) {
         search,
         get,
         getResume,
-        getPannelData
+        getPannelData,
+        updateStatus
     }
 
 }
