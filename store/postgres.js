@@ -1633,6 +1633,59 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     });
   }
 
+  /*
+    Auditoria
+
+  */
+
+
+    function listAud() {
+     
+      return new Promise((resolve, reject) => {
+        client.query(`select * from aud_cotizacion`,  (err, res) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+    
+          }
+          resolve(res.rows);
+        })
+      })
+    }
+
+    function getEmpAud(aud) {
+     
+      return new Promise((resolve, reject) => {
+        client.query(`select * from Usuario where cod_usuario = $1`,[aud] , (err, res) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+    
+          }
+          resolve(res.rows[0]);
+        })
+      })
+    }
+
+
+    function addAud(aud) {
+     
+      return new Promise((resolve, reject) => {
+        client.query(`insert into aud_cotizacion (id_cotizador,id_modificador,fecha,nom_cotizador,nom_modificador
+          ) values ($1,$2,$3,$4,$5)`,[aud.id_cotizador,aud.id_modificador,aud.fecha,aud.nom_cotizador,aud.nom_modificador] , (err, res) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+    
+          }
+          resolve(res.rows);
+        })
+      })
+    }
+
+
+
+
 
 
 module.exports = {
@@ -1723,6 +1776,9 @@ module.exports = {
   countSeguimientoMesPasado,
   countClientesMesActual,
   countClientesMesPasado,
-  updatePoliza
+  updatePoliza,
+  listAud,
+  getEmpAud,
+  addAud
 
 }
