@@ -16,6 +16,7 @@ const cotizacion = require('./modules/cotizacion/network')
 const seguimiento = require('./modules/seguimiento/network')
 const excel = require('./modules/exports/network')
 const relatives = require('./modules/relatives/network')
+const aud = require('./modules/auditoria/network')
 
 
 const user = require('./modules/user/network')
@@ -51,6 +52,7 @@ app.use('/api/cotizacion/',cotizacion)
 app.use('/api/seguimiento/',seguimiento)
 app.use('/api/exports', excel)
 app.use('/api/relatives', relatives)
+app.use('/api/auditoria', aud)
 app.use(errors);
 
 app.listen(port, () => {
