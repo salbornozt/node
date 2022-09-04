@@ -3,6 +3,7 @@ const router = express.Router();
 const response = require('../../../network/response')
 const controller = require('./index');
 const secure = require('./secure');
+const axios = require('axios');
 
 
 router.get('/', (req, resp) => {
@@ -45,6 +46,22 @@ router.post('/', (req, resp) => {
     }).catch((error) => {
         response.Error(req, resp, error.message, 500);
     })
+})
+
+router.post('/predict', (req, resp) => {
+    let payload = {
+        nom_seg : req.body.nom_seg
+    }
+    axios.post('http://127.0.0.1:3000/predict', payload).then(function (pResponse) {
+        console.log(pResponse.data);
+        response.Sucess(req, resp, pResponse.data, 200);
+
+      })
+      .catch(function (error) {
+        console.log(error);
+        response.Error(req, resp, error.message, 500);
+
+      });
 })
 
 
