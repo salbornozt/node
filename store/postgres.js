@@ -871,7 +871,7 @@ function getNaturalezaById(id) {
       on proceso.cod_status = status.cod_status
       inner join usuario
       on proceso.cod_usuario = usuario.cod_usuario
-      WHERE nom_cliente LIKE $1 OR apellido_cliente LIKE $1 OR  cliente.cedula LIKE $1 OR nom_tipo_seguro LIKE $1 LIMIT 10`,[newQuery], (err, res) => {
+      WHERE LOWER(nom_cliente) LIKE LOWER($1) OR LOWER(apellido_cliente) LIKE LOWER($1) OR  cliente.cedula LIKE $1 OR LOWER(nom_tipo_seguro) LIKE LOWER($1) ORDER BY proceso.cod_proceso DESC LIMIT 10 `,[newQuery], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -977,7 +977,7 @@ function getNaturalezaById(id) {
   function getProcesoById(id) {
 
     return new Promise((resolve, reject) => {
-      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, status.cod_status, nom_usuario, fecha_inicio
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.direccion, cliente.company, cliente.cedula, proceso.cod_seguro, nom_tipo_seguro, nom_status, status.cod_status, nom_usuario, fecha_inicio
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
