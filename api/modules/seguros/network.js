@@ -6,7 +6,7 @@ const secure = require('./secure');
 const axios = require('axios');
 
 
-router.get('/', (req, resp) => {
+router.get('/', secure('list'), (req, resp) => {
     controller.list().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -15,7 +15,7 @@ router.get('/', (req, resp) => {
 
 });
 
-router.get('/tipo-seguro/', (req, resp) => {
+router.get('/tipo-seguro/', secure('list'), (req, resp) => {
     controller.listTipoSeguro().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -24,7 +24,7 @@ router.get('/tipo-seguro/', (req, resp) => {
 
 });
 
-router.get('/:id',(req, resp) => {
+router.get('/:id', secure('get'),(req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
 
@@ -32,7 +32,7 @@ router.get('/:id',(req, resp) => {
         response.Error(req, resp, err.message, 500);
     })
 })
-router.delete('/:id', (req, resp) => {
+router.delete('/:id', secure('get'), (req, resp) => {
     controller.remove(req.params.id).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((err) => {
@@ -40,7 +40,7 @@ router.delete('/:id', (req, resp) => {
     })
 })
 
-router.post('/', (req, resp) => {
+router.post('/', secure('insert'), (req, resp) => {
     controller.insert(req.body).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
@@ -48,7 +48,7 @@ router.post('/', (req, resp) => {
     })
 })
 
-router.post('/predict', (req, resp) => {
+router.post('/predict', secure('insert'), (req, resp) => {
     let payload = {
         nom_seg : req.body.nom_seg
     }
@@ -65,7 +65,7 @@ router.post('/predict', (req, resp) => {
 })
 
 
-router.put('/', (req, resp) => {
+router.put('/', secure('update'), (req, resp) => {
     controller.update(req.body).then((result) => {
         console.log('succedd'+result);
         response.Sucess(req, resp, result, 200);

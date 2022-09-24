@@ -73,10 +73,15 @@ module.exports = function(injectedStore) {
         return injectedStore.insertAuth(authData);
     }
 
+    async function updatePassword(cod_user, password){
+        return injectedStore.updatePassword(cod_user,password);
+    }
+
     return {
 
         insert,
-        login, refresh
+        login, refresh,
+        updatePassword
 
     }
 

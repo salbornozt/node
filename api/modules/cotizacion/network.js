@@ -5,7 +5,7 @@ const controller = require('./index');
 const secure = require('./secure');
 
 
-router.get('/', (req, resp) => {
+router.get('/', secure(''), (req, resp) => {
     controller.list().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -14,7 +14,7 @@ router.get('/', (req, resp) => {
 
 });
 
-router.get('/:id',(req, resp) => {
+router.get('/:id', secure(''),(req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
 
@@ -22,7 +22,7 @@ router.get('/:id',(req, resp) => {
         response.Error(req, resp, err.message, 500);
     })
 })
-router.delete('/', (req, resp) => {
+router.delete('/', secure(''), (req, resp) => {
     controller.remove(req.query.id).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((err) => {
@@ -30,7 +30,7 @@ router.delete('/', (req, resp) => {
     })
 })
 
-router.post('/', (req, resp) => {
+router.post('/', secure(''), (req, resp) => {
     controller.insert(req.body).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
@@ -39,7 +39,7 @@ router.post('/', (req, resp) => {
 })
 
 
-router.put('/', (req, resp) => {
+router.put('/', secure(''), (req, resp) => {
     controller.update(req.body).then((result) => {
         console.log('succedd'+result);
         response.Sucess(req, resp, result, 200);
@@ -49,7 +49,7 @@ router.put('/', (req, resp) => {
     })
 })
 
-router.patch('/', (req, resp) => {
+router.patch('/', secure(''), (req, resp) => {
     controller.update(req.body).then((result) => {
         console.log('succedd'+result);
         response.Sucess(req, resp, result, 200);

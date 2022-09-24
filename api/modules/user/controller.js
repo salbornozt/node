@@ -27,8 +27,8 @@ module.exports = function (injectedStore) {
 
     async function insertEmpleadoById() {
         let result = await injectedStore.insertEmpleadoById();
-        let email = "empleado@gmail.com";
-        let password = "1234";        
+        let email = "empleado"+result.cod_usuario+"@gmail.com";
+        let password = "12345678";        
         const pss = await bcrypt.hash(password, 6);
         await auth.insert({
             user_id: result.cod_usuario,
@@ -112,6 +112,14 @@ module.exports = function (injectedStore) {
         return updateResult;
 
     }
+
+    async function updatePassword(body){
+        const mPss = body.req.password
+        const user = body.req.cod_usuario
+        const pss = await bcrypt.hash(mPss, 6);
+
+        return auth.updatePassword(user,pss)
+    }
     async function remove(id) {
         return injectedStore.removeUser(id);
     }
@@ -126,7 +134,8 @@ module.exports = function (injectedStore) {
         get,
         getEmpleados,
         getEmpleadoById,
-        insertEmpleadoById
+        insertEmpleadoById,
+        updatePassword
     }
 
 }

@@ -161,6 +161,21 @@ function insertAuth(data) {
   });
 }
 
+function updatePassword(cod_user, password) {
+  return new Promise((resolve, reject) => {
+    let query = `update auth set contrasena=$1 where cod_usuario = $2 `
+    client.query(query, [password, cod_user], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      console.log("auth updated");
+      resolve(res.rows);
+    })
+
+  });
+}
+
 /**
  * 
  * RELATIVES
@@ -287,10 +302,7 @@ function updateRelatives3( relatives ){
 
   return new Promise((resolve, reject) => {
     client.query(
-    `select nom_cliente, apellido_cliente, ocupacion, company, direccion,email, numero from cliente, email_cliente, celular_cliente
-    where 
-	    cliente.cod_cliente = email_cliente.cod_cliente and
-	    cliente.cod_cliente = celular_cliente.cod_cliente
+    `select nom_cliente, apellido_cliente, ocupacion, company, direccion from cliente
     `, (err, res) => {
       if (err) {
         console.error(err);
@@ -859,7 +871,7 @@ function getNaturalezaById(id) {
       let newQuery = '%'+key+'%';
       console.log('test '+newQuery);
       
-      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.cedula, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.cedula, nom_tipo_seguro, nom_status, nom_usuario, apellido_usuario, fecha_inicio
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
@@ -871,7 +883,7 @@ function getNaturalezaById(id) {
       on proceso.cod_status = status.cod_status
       inner join usuario
       on proceso.cod_usuario = usuario.cod_usuario
-      WHERE LOWER(nom_cliente) LIKE LOWER($1) OR LOWER(apellido_cliente) LIKE LOWER($1) OR  cliente.cedula LIKE $1 OR LOWER(nom_tipo_seguro) LIKE LOWER($1) ORDER BY proceso.cod_proceso DESC LIMIT 10 `,[newQuery], (err, res) => {
+      WHERE LOWER(nom_cliente) LIKE LOWER($1) OR LOWER(apellido_cliente) LIKE LOWER($1) OR  cliente.cedula LIKE $1 OR LOWER(nom_tipo_seguro) LIKE LOWER($1) OR LOWER(nom_usuario) LIKE LOWER($1) ORDER BY proceso.cod_proceso DESC LIMIT 10 `,[newQuery], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -931,7 +943,7 @@ function getNaturalezaById(id) {
   function listProcesos(start, end) {    
     return new Promise((resolve, reject) => {
       
-      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, fecha_inicio
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, apellido_usuario, fecha_inicio
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
@@ -1672,7 +1684,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
      
       return new Promise((resolve, reject) => {
         client.query(`insert into aud_cotizacion (id_cotizador,id_modificador,fecha,nom_cotizador,nom_modificador
-          ) values ($1,$2,$3,$4,$5)`,[aud.id_cotizador,aud.id_modificador,aud.fecha,aud.nom_cotizador,aud.nom_modificador] , (err, res) => {
+          ) values ($1,$2,$3,$4,$5)`,[aud.id_cotizador,aud.id_modificador,aud.fecha,aud.nom_cotizador,aud.nomAsigando] , (err, res) => {
           if (err) {
             console.error(err);
             reject(err);
@@ -1695,6 +1707,7 @@ module.exports = {
   insertUser,
   updateUser,
   insertAuth,
+  updatePassword,
   listClients,
   getClient,
   updateClient,
