@@ -41,7 +41,7 @@ function getEmpleados() {
   var data = "usuario.cod_usuario, email, contrasena, nom_usuario, apellido_usuario, tipo_usuario, documento, celular"
   var table = "usuario"
   return new Promise((resolve, reject) => {
-    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE usuario.tipo_usuario=0`, [], (err, res) => {
+    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE usuario.tipo_usuario=0 order by nom_usuario`, [], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
