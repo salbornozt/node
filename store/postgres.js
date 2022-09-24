@@ -680,7 +680,7 @@ function getNaturalezaById(id) {
       FROM campo  
       INNER JOIN campo_seguro  
       ON campo.cod_campo = campo_seguro.cod_campo  
-      WHERE campo_seguro.cod_seguro = $1`, [id], (err, res) => {
+      WHERE campo_seguro.cod_seguro = $1 order by campo_seguro.cod_campo_seguro`, [id], (err, res) => {
 
         if (err) {
           console.error(err);
@@ -780,12 +780,11 @@ function getNaturalezaById(id) {
 
   function listSeguros() {    
     return new Promise((resolve, reject) => {
-      client.query(`SELECT seguro.cod_seguro, seguro.cod_tipo_seguro,tipo_seguro.nom_tipo_seguro, seguro.vigencia,seguro.cod_compania, compania.nom_compania,seguro.precio, seguro.descripcion, seguro.resumen
+      client.query(`SELECT seguro.cod_seguro, seguro.cod_tipo_seguro,tipo_seguro.nom_tipo_seguro, seguro.vigencia,seguro.precio, seguro.descripcion, seguro.resumen
       FROM seguro  
       INNER JOIN tipo_seguro  
       ON seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
-      INNER JOIN compania  
-      ON seguro.cod_compania = compania.cod_compania`, (err, res) => {
+      `, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);

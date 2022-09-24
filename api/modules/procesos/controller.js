@@ -96,6 +96,11 @@ module.exports = function (injectedStore) {
         console.log('myID '+id);
 
         let proceso = await injectedStore.getProcesoById(id);
+        let camposReq = await injectedStore.getNumeroCamposSeguro(proceso.cod_seguro)
+        let camposllenos = await injectedStore.getNCamposListosProceso(proceso.cod_proceso);
+        let porcj = camposllenos/camposReq.length;                     
+        proceso.porcentaje=porcj.toFixed(2); 
+
         let results = {
             category : "abierto",
             proceso : proceso,
@@ -108,13 +113,13 @@ module.exports = function (injectedStore) {
                 {
                     order   : 0,
                     title   : 'Resumen',
-                    subtitle: 'Resumen del proceso',
+                    subtitle: 'Vista general del proceso',
                     content : ''
                 },
                 {
                     order   : 1,
                     title   : 'Iniciación',
-                    subtitle: 'Where to find the sample code and how to access it',
+                    subtitle: 'Información ',
                     content : ''
                 },
                 {
