@@ -24,6 +24,7 @@ module.exports = function(event) {
                 next();
                 break;
             default:
+                auth.verify(req);
                 next();
                 break;
         }

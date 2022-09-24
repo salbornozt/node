@@ -13,10 +13,8 @@ module.exports = function(injectedStore) {
         var password = body.password;
 
         const data = await injectedStore.getUserByEmail(email);
-        console.log(data.contrasena+'<-');
         if (data) {
-            //return auth.signUser(data);
-            
+        
             return bcrypt.compare(password, data.contrasena).then((equal) => {
 
                 if (equal) {
@@ -75,10 +73,15 @@ module.exports = function(injectedStore) {
         return injectedStore.insertAuth(authData);
     }
 
+    async function updatePassword(cod_user, password){
+        return injectedStore.updatePassword(cod_user,password);
+    }
+
     return {
 
         insert,
-        login, refresh
+        login, refresh,
+        updatePassword
 
     }
 

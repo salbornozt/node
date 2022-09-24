@@ -14,7 +14,7 @@ router.get('/', secure('list'), (req, resp) => {
 
 });
 
-router.get('/empleados/', (req, resp) => {
+router.get('/empleados/', secure('list'), (req, resp) => {
     controller.getEmpleados().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -23,7 +23,7 @@ router.get('/empleados/', (req, resp) => {
 
 });
 
-router.get('/empleados/:id', (req, resp) => {
+router.get('/empleados/:id', secure('get'), (req, resp) => {
     controller.getEmpleadoById(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -32,7 +32,7 @@ router.get('/empleados/:id', (req, resp) => {
 
 });
 
-router.post('/empleados/', (req, resp) => {
+router.post('/empleados/', secure('insert'), (req, resp) => {
     controller.insertEmpleadoById().then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
@@ -48,7 +48,7 @@ router.get('/:id', secure('get'),(req, resp) => {
         response.Error(req, resp, err.message, 500);
     })
 })
-router.delete('/:id', (req, resp) => {
+router.delete('/:id', secure('delete'), (req, resp) => {
     console.log(req.params.id)
     controller.remove(req.params.id).then((result) => {
         response.Sucess(req, resp, result, 200);
@@ -57,7 +57,7 @@ router.delete('/:id', (req, resp) => {
     })
 })
 
-router.post('/', (req, resp) => {
+router.post('/', secure('insert'), (req, resp) => {
     controller.insert(req.body).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
@@ -66,7 +66,7 @@ router.post('/', (req, resp) => {
 })
 
 
-router.put('/',  (req, resp) => {
+router.put('/', secure('update'),  (req, resp) => {
     controller.update(req.body).then((result) => {
         console.log('succedd'+result);
         response.Sucess(req, resp, result, 200);
@@ -76,8 +76,28 @@ router.put('/',  (req, resp) => {
     })
 })
 
+router.put('/perfil/', secure('update'),  (req, resp) => {
+    controller.updatePerfil(req.body).then((result) => {
+        console.log('succedd'+result);
+        response.Sucess(req, resp, result, 200);
+    }).catch((error) => {
+        console.log('error'+error);
+        response.Error(req, resp, error, 500);
+    })
+})
 
-router.patch('/', (req, resp) => {
+router.put('/password/', secure('update'),  (req, resp) => {
+    controller.updatePassword(req.body).then((result) => {
+        console.log('succedd'+result);
+        response.Sucess(req, resp, result, 200);
+    }).catch((error) => {
+        console.log('error'+error);
+        response.Error(req, resp, error, 500);
+    })
+})
+
+
+router.patch('/', secure('update'), (req, resp) => {
     console.log(req.body);
     controller.update(req.body).then((result) => {
         console.log('succedd' + result);

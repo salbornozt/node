@@ -10,17 +10,32 @@ module.exports = function (injectedStore) {
         throw new Error('Db error');
     }
 
-    async function list() {
+    async function list(pageNumber) {
+        console.log('pgd '+pageNumber);
 
-        let listaProcesos = await injectedStore.listProcesos();
+        
+        let lengthResult = await injectedStore.countProcesos();
+        let length = parseInt(lengthResult[0].count);
+        let pageSize =  10;
+        let page = parseInt(pageNumber);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+        let lastPage =Math.max(Math.round(length/pageSize), 1);
+        let nextPage = (page + 1);
+        let end =Math.min((pageSize * nextPage), length);
+        let begin = page * pageSize;
+        console.log((pageSize * (page + 1))+' '+pageSize+' '+nextPage+' peprpep');
 
-        let listCodProcesos = await injectedStore.getAllCodProcesos();
-
-        let listaSeguros = await injectedStore.listSeguros();
+       
        
         let cmpReq = []
         let cmpLlenos = []
         let porcentajes = []
+
+        let listaProcesos = await injectedStore.listProcesos(begin + 1,end);
+
+        let listCodProcesos = await injectedStore.listProcesos(begin + 1,end);
+
+        let listaSeguros = await injectedStore.listSeguros();
+
 
 
         for (let index = 0; index < listaSeguros.length; index++) {
@@ -53,17 +68,77 @@ module.exports = function (injectedStore) {
 
         
 
-        console.log(cmpLlenos);
+        /*console.log(cmpLlenos);
         console.log(cmpReq);      
         console.log(porcentajes); 
-        console.log(listaProcesos)
+        console.log(listaProcesos)*/
+        let results = {
+            pagination : {
+                length :  length,
+                size : pageSize,
+                page : page,
+                lastPage : lastPage,
+                startIndex : begin,
+                endIndex : end - 1
+            },
+            process : listaProcesos
+        }
 
 
-        return listaProcesos;
+        return results;
+    }
+
+    async function getResume(){
+        return injectedStore.listProcesosPorVencerce();
     }
 
     async function get(id) {
-        return injectedStore.getSeguro(id);
+        console.log('myID '+id);
+
+        let proceso = await injectedStore.getProcesoById(id);
+        let results = {
+            category : "abierto",
+            proceso : proceso,
+            id : "3",
+            progress :  {
+                completed : 3,
+                currentStep : proceso.cod_status
+            },
+            steps :[
+                {
+                    order   : 0,
+                    title   : 'Resumen',
+                    subtitle: 'Resumen del proceso',
+                    content : ''
+                },
+                {
+                    order   : 1,
+                    title   : 'Iniciación',
+                    subtitle: 'Where to find the sample code and how to access it',
+                    content : ''
+                },
+                {
+                    order   : 2,
+                    title   : 'Cotización',
+                    subtitle: 'How to create a basic Firebase project and how to run it locally',
+                    content : ''
+                },
+                {
+                    order   : 3,
+                    title   : 'Recabación de los documentos',
+                    subtitle: 'How to build, push and run the project remotely',
+                    content : ''
+                },
+                {
+                    order   : 4,
+                    title   : 'Seguimiento',
+                    subtitle: 'Introducing the Functions and Functions Directory',
+                    content : ''
+                }
+            ],
+            totalSteps : 5
+        }
+        return results;
     }
 
 
@@ -93,13 +168,48 @@ module.exports = function (injectedStore) {
     async function remove(id) {
         return injectedStore.deleteSeguro(id);
     }
+    async function search(key){
+        return injectedStore.searchProcesos(key);
+    }
+
+    async function getPannelData(){
+        let procesoActual = await injectedStore.countProcesosMesActual();
+        let procesoPasado = await injectedStore.countProcesosMesPasado();
+        let cotiActual = await injectedStore.countCotizacionesMesActual();
+        let cotiPasado = await injectedStore.countCotizacionesMesPasado();
+        let seguiActual = await injectedStore.countSeguimientoMesActual();
+        let seguiPasado = await injectedStore.countSeguimientoMesPasado();
+        let clienteActual = await injectedStore.countClientesMesActual();
+        let clientePasado = await injectedStore.countClientesMesPasado();
+        const result = {
+            proceso_actual : procesoActual,
+            proceso_pasado : procesoPasado,
+            cotizacion_actual : cotiActual,
+            cotizacion_pasado : cotiPasado,
+            seguimiento_actual : seguiActual,
+            seguimiento_pasado : seguiPasado,
+            clientes_actual : clienteActual,
+            clientes_pasado : clientePasado
+        }
+
+        return result;
+    }
+
+    async function updateStatus(body){
+        return injectedStore.updateStatus(body.cod_status, body.cod_proceso);
+
+    }
 
     return {
         list,
         insert,
         update,
         remove,
-        get
+        search,
+        get,
+        getResume,
+        getPannelData,
+        updateStatus
     }
 
 }
