@@ -5,7 +5,7 @@ const controller = require('./index');
 const secure = require('./secure');
 
 
-router.get('/', (req, resp) => {
+router.get('/', secure(''), (req, resp) => {
     controller.list().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -14,7 +14,7 @@ router.get('/', (req, resp) => {
 
 });
 
-router.get('/:id',(req, resp) => {
+router.get('/:id', secure(''),(req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
 
@@ -30,7 +30,7 @@ router.delete('/:id', secure('delete'), (req, resp) => {
     })
 })
 
-router.post('/', (req, resp) => {
+router.post('/', secure(''), (req, resp) => {
     controller.insert(req.body.customer).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {

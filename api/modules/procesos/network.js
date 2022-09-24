@@ -6,7 +6,7 @@ const controller = require('./index');
 const secure = require('./secure');
 
 
-router.get('/', (req, resp) => {
+router.get('/', secure(''), (req, resp) => {
     controller.list(req.query.page).then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -15,7 +15,7 @@ router.get('/', (req, resp) => {
 
 });
 
-router.get('/renovar', (req, resp) => {
+router.get('/renovar', secure(''), (req, resp) => {
     controller.getResume().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -24,7 +24,7 @@ router.get('/renovar', (req, resp) => {
 
 });
 
-router.get('/panel', (req, resp) => {
+router.get('/panel', secure(''), (req, resp) => {
     controller.getPannelData().then((data) => {
         response.Sucess(req, resp, data, 200);
     }).catch((error) => {
@@ -33,7 +33,7 @@ router.get('/panel', (req, resp) => {
 
 });
 
-router.get('/:id',(req, resp) => {
+router.get('/:id', secure(''),(req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);
 
@@ -41,7 +41,7 @@ router.get('/:id',(req, resp) => {
         response.Error(req, resp, err.message, 500);
     })
 })
-router.delete('/:id', (req, resp) => {
+router.delete('/:id', secure(''), (req, resp) => {
     controller.remove(req.params.id).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((err) => {
@@ -49,7 +49,7 @@ router.delete('/:id', (req, resp) => {
     })
 })
 
-router.post('/', (req, resp) => {
+router.post('/', secure(''), (req, resp) => {
     controller.insert(req.body).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((error) => {
@@ -58,7 +58,7 @@ router.post('/', (req, resp) => {
 })
 
 
-router.put('/', (req, resp) => {
+router.put('/', secure(''), (req, resp) => {
     controller.update(req.body).then((result) => {
         console.log('succedd'+result);
         response.Sucess(req, resp, result, 200);
@@ -69,7 +69,7 @@ router.put('/', (req, resp) => {
 })
 
 
-router.get('/search/:key',(req, resp) => {
+router.get('/search/:key', secure(''),(req, resp) => {
     controller.search(req.params.key).then((data) => {
         response.Sucess(req, resp, data, 200);
 
@@ -78,7 +78,7 @@ router.get('/search/:key',(req, resp) => {
     })
 })
 
-router.patch('/status', (req, resp) => {
+router.patch('/status', secure(''), (req, resp) => {
     controller.updateStatus(req.body).then((result) => {
         console.log('succedd'+result);
         response.Sucess(req, resp, result, 200);
