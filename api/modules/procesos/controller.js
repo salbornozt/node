@@ -119,25 +119,25 @@ module.exports = function (injectedStore) {
                 {
                     order   : 1,
                     title   : 'Iniciación',
-                    subtitle: 'Información ',
+                    subtitle: 'Información básica sobre el seguro y el cliente.  ',
                     content : ''
                 },
                 {
                     order   : 2,
                     title   : 'Cotización',
-                    subtitle: 'How to create a basic Firebase project and how to run it locally',
+                    subtitle: 'Documentación necesria para la selección de la póliza.',
                     content : ''
                 },
                 {
                     order   : 3,
                     title   : 'Recabación de los documentos',
-                    subtitle: 'How to build, push and run the project remotely',
+                    subtitle: 'Documentos necesarios para la póliza.',
                     content : ''
                 },
                 {
                     order   : 4,
                     title   : 'Seguimiento',
-                    subtitle: 'Introducing the Functions and Functions Directory',
+                    subtitle: 'Seguimiento de la póliza.',
                     content : ''
                 }
             ],
