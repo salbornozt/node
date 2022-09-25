@@ -1682,8 +1682,8 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     function addAud(aud) {
      
       return new Promise((resolve, reject) => {
-        client.query(`insert into aud_cotizacion (id_cotizador,id_modificador,fecha,nom_cotizador,nom_modificador
-          ) values ($1,$2,$3,$4,$5)`,[aud.id_cotizador,aud.id_modificador,aud.fecha,aud.nom_cotizador,aud.nomAsigando] , (err, res) => {
+        client.query(`insert into aud_cotizacion (id_cotizador,id_modificador,fecha,nom_cotizador,nom_modificador,numero_proceso,codigo_cotizacion
+          ) values ($1,$2,$3,$4,$5,$6,$7)`,[aud.id_cotizador,aud.id_modificador,aud.fecha,aud.nom_cotizador,aud.nomAsigando,aud.cod_proceso, aud.numero_cotizacion] ,(err, res) => {
           if (err) {
             console.error(err);
             reject(err);
