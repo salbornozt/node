@@ -33,6 +33,15 @@ router.get('/panel', secure(''), (req, resp) => {
 
 });
 
+router.get('/renovar/:id', secure(''), (req, resp) => {
+    controller.getResumePorEmpleado(req.params.id).then((data) => {
+        response.Sucess(req, resp, data, 200);
+    }).catch((error) => {
+        response.Error(req, resp, error.message, 500);
+    })
+
+});
+
 router.get('/:id', secure(''),(req, resp) => {
     controller.get(req.params.id).then((data) => {
         response.Sucess(req, resp, data, 200);

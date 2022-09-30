@@ -92,6 +92,10 @@ module.exports = function (injectedStore) {
         return injectedStore.listProcesosPorVencerce();
     }
 
+    async function getResumePorEmpleado(id){
+        return injectedStore.listProcesosPorVencercePorEmpleado(id);
+    }
+
     async function get(id) {
         console.log('myID '+id);
 
@@ -214,7 +218,8 @@ module.exports = function (injectedStore) {
         get,
         getResume,
         getPannelData,
-        updateStatus
+        updateStatus,
+        getResumePorEmpleado
     }
 
 }

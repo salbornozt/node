@@ -80,6 +80,7 @@ module.exports = function (injectedStore) {
 
         let updateResult = await injectedStore.updateUser(empleado);
 
+
        
 
         let customerUpdated = await this.get(cod_usuario);
@@ -105,7 +106,8 @@ module.exports = function (injectedStore) {
 
         let updateResult = await injectedStore.updateUser(empleado);
 
-       
+        console.log('here');
+        let authUpdateResult = await injectedStore.updateAuth(empleado);
 
         //let customerUpdated = await this.get(cod_usuario);
 

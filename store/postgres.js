@@ -146,6 +146,26 @@ function updateUser(data) {
   });
 }
 
+function updateAuth(data) {
+  //console.log(data)
+  console.log("Entro al auth")
+  return new Promise((resolve, reject) => {
+    
+    let query = `UPDATE auth SET email = $1 WHERE cod_usuario =$2`
+  
+    client.query(query, [data.email,data.cod_usuario], (err, res) => {
+      if (err) {
+        console.log('error aqui' + err.message);
+        console.error(err);
+        reject(err);
+      }
+      console.log("user updated" + res.rows);
+      resolve(res.rows);
+    })
+
+  });
+}
+
 function insertAuth(data) {
   return new Promise((resolve, reject) => {
     let query = `insert into auth(cod_usuario,email,contrasena) values ($1,$2,$3) `
@@ -882,7 +902,7 @@ function getNaturalezaById(id) {
       on proceso.cod_status = status.cod_status
       inner join usuario
       on proceso.cod_usuario = usuario.cod_usuario
-      WHERE LOWER(nom_cliente) LIKE LOWER($1) OR LOWER(apellido_cliente) LIKE LOWER($1) OR  cliente.cedula LIKE $1 OR LOWER(nom_tipo_seguro) LIKE LOWER($1) OR LOWER(nom_usuario) LIKE LOWER($1) ORDER BY proceso.cod_proceso DESC LIMIT 10 `,[newQuery], (err, res) => {
+      WHERE LOWER(nom_cliente) LIKE LOWER($1) OR LOWER(apellido_cliente) LIKE LOWER($1) OR  cliente.cedula LIKE $1 OR LOWER(nom_tipo_seguro) LIKE LOWER($1) OR LOWER(nom_usuario) LIKE LOWER($1) OR LOWER(apellido_usuario) LIKE LOWER($1) OR LOWER(nom_status) LIKE LOWER($1) ORDER BY proceso.cod_proceso DESC LIMIT 10 `,[newQuery], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1025,7 +1045,40 @@ function getNaturalezaById(id) {
       on proceso.cod_seguro = seguro.cod_seguro
       inner join tipo_seguro
 on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
-      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '5 days'`, (err, res) => {
+      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days'`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs fetched');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )    
+  }
+
+  function listProcesosPorVencercePorEmpleado(id) {    
+    
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select proceso.cod_proceso, nom_cliente, apellido_cliente, nom_tipo_seguro, fecha_vigencia_hasta, numero_poliza, usuario.cod_usuario  from poliza 
+      inner join seguimiento_por_proceso 
+      on poliza.cod_seguimiento = seguimiento_por_proceso.cod_seguimiento
+      inner join proceso 
+      on proceso.cod_proceso = seguimiento_por_proceso.cod_proceso
+      inner join cliente
+      on proceso.cod_cliente = cliente.cod_cliente
+      inner join seguro
+      on proceso.cod_seguro = seguro.cod_seguro
+      inner join tipo_seguro
+on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      inner join usuario
+      on proceso.cod_usuario = usuario.cod_usuario
+      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days' and usuario.cod_usuario = $1`,[id], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1705,6 +1758,7 @@ module.exports = {
   getUserByEmail,
   insertUser,
   updateUser,
+  updateAuth,
   insertAuth,
   updatePassword,
   listClients,
@@ -1779,6 +1833,7 @@ module.exports = {
   insertPoliza,
   getPolizaByProceso,
   listProcesosPorVencerce,
+  listProcesosPorVencercePorEmpleado,
   updateStatus,
   countProcesosMesActual,
   countProcesosMesPasado,
