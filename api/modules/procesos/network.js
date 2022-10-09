@@ -50,8 +50,9 @@ router.get('/:id', secure(''),(req, resp) => {
         response.Error(req, resp, err.message, 500);
     })
 })
-router.delete('/:id', secure(''), (req, resp) => {
-    controller.remove(req.params.id).then((result) => {
+router.delete('/', secure(''), (req, resp) => {
+    console.log(req.query.id);
+    controller.remove(req.query.id).then((result) => {
         response.Sucess(req, resp, result, 200);
     }).catch((err) => {
         response.Error(req, resp, err.message, 500);

@@ -78,9 +78,9 @@ module.exports = function (injectedStore) {
      
         
 
-        let updateResult = await injectedStore.updateUser(empleado);
+        await injectedStore.updateUser(empleado);
 
-
+        await injectedStore.updateAuth(empleado);
        
 
         let customerUpdated = await this.get(cod_usuario);

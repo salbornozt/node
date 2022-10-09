@@ -14,7 +14,7 @@ module.exports = function (injectedStore) {
         console.log('pgd '+pageNumber);
 
         
-        let lengthResult = await injectedStore.countProcesos();
+        let lengthResult = await injectedStore.countProcesosEnabled();
         let length = parseInt(lengthResult[0].count);
         let pageSize =  10;
         let page = parseInt(pageNumber);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
@@ -22,7 +22,7 @@ module.exports = function (injectedStore) {
         let nextPage = (page + 1);
         let end =Math.min((pageSize * nextPage), length);
         let begin = page * pageSize;
-        console.log((pageSize * (page + 1))+' '+pageSize+' '+nextPage+' peprpep');
+        console.log((pageSize * (page + 1))+' '+pageSize+' '+page+' peprpep');
 
        
        
@@ -30,9 +30,7 @@ module.exports = function (injectedStore) {
         let cmpLlenos = []
         let porcentajes = []
 
-        let listaProcesos = await injectedStore.listProcesos(begin + 1,end);
-
-        let listCodProcesos = await injectedStore.listProcesos(begin + 1,end);
+        let listaProcesos = await injectedStore.listProcesos(page + 1,pageSize);
 
         let listaSeguros = await injectedStore.listSeguros();
 
@@ -51,12 +49,12 @@ module.exports = function (injectedStore) {
             
         } 
 
-        for (let x = 0; x < listCodProcesos.length; x++) {
+        for (let x = 0; x < listaProcesos.length; x++) {
             let a = cmpLlenos[x];
             
             for (let y = 0; y < listaSeguros.length; y++) {                               
                 let b = cmpReq[y];                               
-                if (listCodProcesos[x].cod_seguro==listaSeguros[y].cod_seguro) {                     
+                if (listaProcesos[x].cod_seguro==listaSeguros[y].cod_seguro) {                     
                     let porcj = a/b;
                     porcentajes.push(porcj);  
                          
@@ -175,7 +173,7 @@ module.exports = function (injectedStore) {
 
     }
     async function remove(id) {
-        return injectedStore.deleteSeguro(id);
+        return injectedStore.deleteProceso(id);
     }
     async function search(key){
         return injectedStore.searchProcesos(key);

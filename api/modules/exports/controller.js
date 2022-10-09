@@ -10,8 +10,28 @@ module.exports = function(injectedStore) {
     }
 
     async function list() {
+        const clientes = await injectedStore.listClientsExport();
+
+
+        for (let index = 0; index < clientes.length; index++) {
+            //let camposReq = await injectedStore.getNumeroCamposSeguro(listaSeguros[index].cod_seguro)
+            //cmpReq.push(camposReq.length);     
+            let item = clientes[index]       
+            let emails = await injectedStore.getClientEmails(item.cod_cliente);
+            let phones = await injectedStore.getClientPhones(item.cod_cliente);
+            let relative = await injectedStore.listRelatives(item.cod_cliente);
+
+            item.correos = emails;
+            item.celulares = phones;    
+            item.relative = relative;    
+
+        }
+
         
-        return injectedStore.listClientsExport();
+        console.log(clientes);
+
+        
+        return clientes
 
     }
 
