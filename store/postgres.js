@@ -1127,7 +1127,7 @@ function getNaturalezaById(id) {
       on proceso.cod_seguro = seguro.cod_seguro
       inner join tipo_seguro
 on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
-      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days'`, (err, res) => {
+      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days' AND estado_proceso = 1`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1160,7 +1160,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
 on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
       inner join usuario
       on proceso.cod_usuario = usuario.cod_usuario
-      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days' and usuario.cod_usuario = $1`,[id], (err, res) => {
+      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days' and usuario.cod_usuario = $1 AND estado_proceso = 1`,[id], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
