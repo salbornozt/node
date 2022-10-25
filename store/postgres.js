@@ -507,7 +507,7 @@ function insertEmpleadoById() {
 
   let name = "Nuevo Empleado";
   return new Promise((resolve, reject) => {
-    let query = `insert into usuario(nom_usuario,tipo_usuario) values ($1,0) RETURNING cod_usuario`
+    let query = `insert into usuario(nom_usuario,tipo_usuario, estado_usuario) values ($1,0,1) RETURNING cod_usuario`
     client.query(query, [name], (err, res) => {
       if (err) {
         console.error(err);
