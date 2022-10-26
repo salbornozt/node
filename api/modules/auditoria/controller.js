@@ -30,7 +30,9 @@ module.exports = function(injectedStore) {
             id_modificador: body.idEmpAsignado,
             fecha: date,
             nom_cotizador: nomCotizador.nom_usuario,
-            nomAsigando: nomAsigando.nom_usuario           
+            nomAsigando: nomAsigando.nom_usuario,
+            cod_proceso: body.cod_proceso,       
+            numero_cotizacion: body.numero_cotizacion            
         } 
 
         return injectedStore.addAud(aud);

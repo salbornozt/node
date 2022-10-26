@@ -26,7 +26,7 @@ function list() {
   var data = "usuario.cod_usuario, email, contrasena, nom_usuario, apellido_usuario, tipo_usuario, documento, celular"
   var table = "usuario"
   return new Promise((resolve, reject) => {
-    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario`, [], (err, res) => {
+    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario where estado_usuario = 1`, [], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -41,7 +41,7 @@ function getEmpleados() {
   var data = "usuario.cod_usuario, email, contrasena, nom_usuario, apellido_usuario, tipo_usuario, documento, celular"
   var table = "usuario"
   return new Promise((resolve, reject) => {
-    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE usuario.tipo_usuario=0`, [], (err, res) => {
+    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE usuario.tipo_usuario=0 and estado_usuario = 1 order by nom_usuario`, [], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -89,7 +89,7 @@ function getUserByEmail(email) {
 
   var data = "usuario.cod_usuario, email, contrasena, nom_usuario, apellido_usuario, tipo_usuario, documento, celular"
   return new Promise((resolve, reject) => {
-    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE email = $1`, [email], (err, res) => {
+    client.query(`select ${data} from auth inner join usuario on auth.cod_usuario = usuario.cod_usuario WHERE email = $1 and usuario.estado_usuario = 1`, [email], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -134,6 +134,26 @@ function updateUser(data) {
     let query = `UPDATE usuario SET nom_usuario = $1, apellido_usuario=$2, celular=$3 WHERE cod_usuario =$4`
   
     client.query(query, [data.nom_usuario,data.apellido_usuario,data.celular,data.cod_usuario], (err, res) => {
+      if (err) {
+        console.log('error aqui' + err.message);
+        console.error(err);
+        reject(err);
+      }
+      console.log("user updated" + res.rows);
+      resolve(res.rows);
+    })
+
+  });
+}
+
+function updateAuth(data) {
+  //console.log(data)
+  console.log("Entro al auth")
+  return new Promise((resolve, reject) => {
+    
+    let query = `UPDATE auth SET email = $1 WHERE cod_usuario =$2`
+  
+    client.query(query, [data.email,data.cod_usuario], (err, res) => {
       if (err) {
         console.log('error aqui' + err.message);
         console.error(err);
@@ -302,7 +322,7 @@ function updateRelatives3( relatives ){
 
   return new Promise((resolve, reject) => {
     client.query(
-    `select nom_cliente, apellido_cliente, ocupacion, company, direccion from cliente
+    `select cod_cliente, cedula, birth_date, nom_cliente, apellido_cliente, ocupacion, company, direccion from cliente where estado_cliente = 1
     `, (err, res) => {
       if (err) {
         console.error(err);
@@ -321,7 +341,7 @@ function listClients() {
   var data = "*"
   var table = "cliente"
   return new Promise((resolve, reject) => {
-    client.query(`select ${data} from ${table} order by nom_cliente`, (err, res) => {
+    client.query(`select ${data} from ${table} where estado_cliente = 1  order by nom_cliente`, (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -369,6 +389,38 @@ function getClientEmails(id) {
   var table = "email_cliente"
   return new Promise((resolve, reject) => {
     client.query(`select ${data} from ${table} where cod_cliente = $1`, [id], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      resolve(res.rows);
+    })
+  })
+
+}
+
+function getAllEmails() {
+  var data = "*"
+  var table = "email_cliente"
+  return new Promise((resolve, reject) => {
+    client.query(`select ${data} from ${table}`, [id], (err, res) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+
+      }
+      resolve(res.rows);
+    })
+  })
+
+}
+
+function getAllPhones() {
+  var data = "*"
+  var table = "celular_cliente"
+  return new Promise((resolve, reject) => {
+    client.query(`select ${data} from ${table}`, [id], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -433,9 +485,10 @@ function updateClient(id,data) {
 function insertClientToGetId() {
   const time = new Date().toISOString();
   let name = "Nuevo Cliente";
+  let estado = 1;
   return new Promise((resolve, reject) => {
-    let query = `insert into cliente(nom_cliente,fecha_creacion) values ($1,$2) RETURNING cod_cliente`
-    client.query(query, [name,time], (err, res) => {
+    let query = `insert into cliente(nom_cliente,fecha_creacion,estado_cliente) values ($1,$2,$3) RETURNING cod_cliente`
+    client.query(query, [name,time,estado], (err, res) => {
       if (err) {
         console.error(err);
         reject(err);
@@ -454,7 +507,7 @@ function insertEmpleadoById() {
 
   let name = "Nuevo Empleado";
   return new Promise((resolve, reject) => {
-    let query = `insert into usuario(nom_usuario,tipo_usuario) values ($1,0) RETURNING cod_usuario`
+    let query = `insert into usuario(nom_usuario,tipo_usuario, estado_usuario) values ($1,0,1) RETURNING cod_usuario`
     client.query(query, [name], (err, res) => {
       if (err) {
         console.error(err);
@@ -472,7 +525,7 @@ function removeUser(id) {
 
   
   return new Promise((resolve, reject) => {
-    let query = `delete from auth where cod_usuario = $1`
+    let query = `update usuario set estado_usuario = 0 where cod_usuario = $1`
     client.query(query, [id], (err, res) => {
       let respuesta = {
         isDeleted : true
@@ -496,7 +549,7 @@ function removeClient(id) {
 
   
   return new Promise((resolve, reject) => {
-    let query = `delete from cliente where cod_cliente = $1`
+    let query = `update cliente set estado_cliente = 0 where cod_cliente = $1`
     client.query(query, [id], (err, res) => {
       let respuesta = {
         isDeleted : true
@@ -680,7 +733,7 @@ function getNaturalezaById(id) {
       FROM campo  
       INNER JOIN campo_seguro  
       ON campo.cod_campo = campo_seguro.cod_campo  
-      WHERE campo_seguro.cod_seguro = $1`, [id], (err, res) => {
+      WHERE campo_seguro.cod_seguro = $1 order by campo_seguro.cod_campo_seguro`, [id], (err, res) => {
 
         if (err) {
           console.error(err);
@@ -780,12 +833,11 @@ function getNaturalezaById(id) {
 
   function listSeguros() {    
     return new Promise((resolve, reject) => {
-      client.query(`SELECT seguro.cod_seguro, seguro.cod_tipo_seguro,tipo_seguro.nom_tipo_seguro, seguro.vigencia,seguro.cod_compania, compania.nom_compania,seguro.precio, seguro.descripcion, seguro.resumen
+      client.query(`SELECT seguro.cod_seguro, seguro.cod_tipo_seguro,tipo_seguro.nom_tipo_seguro, seguro.vigencia,seguro.precio, seguro.descripcion, seguro.resumen
       FROM seguro  
       INNER JOIN tipo_seguro  
       ON seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
-      INNER JOIN compania  
-      ON seguro.cod_compania = compania.cod_compania`, (err, res) => {
+      `, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -871,7 +923,7 @@ function getNaturalezaById(id) {
       let newQuery = '%'+key+'%';
       console.log('test '+newQuery);
       
-      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.cedula, nom_tipo_seguro, nom_status, nom_usuario, apellido_usuario, fecha_inicio
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.cedula, nom_tipo_seguro, nom_status, nom_usuario, apellido_usuario, fecha_inicio, estado_proceso
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
@@ -883,7 +935,7 @@ function getNaturalezaById(id) {
       on proceso.cod_status = status.cod_status
       inner join usuario
       on proceso.cod_usuario = usuario.cod_usuario
-      WHERE LOWER(nom_cliente) LIKE LOWER($1) OR LOWER(apellido_cliente) LIKE LOWER($1) OR  cliente.cedula LIKE $1 OR LOWER(nom_tipo_seguro) LIKE LOWER($1) OR LOWER(nom_usuario) LIKE LOWER($1) ORDER BY proceso.cod_proceso DESC LIMIT 10 `,[newQuery], (err, res) => {
+      WHERE (LOWER(nom_cliente) LIKE LOWER($1) OR LOWER(apellido_cliente) LIKE LOWER($1) OR  cliente.cedula LIKE $1 OR LOWER(nom_tipo_seguro) LIKE LOWER($1) OR LOWER(nom_usuario) LIKE LOWER($1) OR LOWER(apellido_usuario) LIKE LOWER($1) OR LOWER(nom_status) LIKE LOWER($1)) AND estado_proceso = 1 ORDER BY proceso.cod_proceso DESC LIMIT 10 `,[newQuery], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -918,6 +970,34 @@ function getNaturalezaById(id) {
     )    
   }
 
+  function deleteProceso(id) {    
+    console.log('id de '+id);
+    return new Promise((resolve, reject) => {
+      
+      client.query(`update proceso set estado_proceso = 0 where cod_proceso = $1`,[id], (err, res) => {
+        let isDeleted = true;
+        
+        if (err) {
+          console.error(err);
+          isDeleted = false
+          let respuesta = {
+            isDeleted : isDeleted
+          }
+          reject(respuesta);
+        }
+        let respuesta = {
+          isDeleted : isDeleted
+        }
+        console.log("process removed");
+        
+  
+        resolve(respuesta);
+
+      });
+    }
+    )    
+  }
+
   
   function countProcesos() {
     return new Promise((resolve, reject) => {
@@ -939,11 +1019,32 @@ function getNaturalezaById(id) {
   }
 
 
-
-  function listProcesos(start, end) {    
+  function countProcesosEnabled() {
     return new Promise((resolve, reject) => {
       
-      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, apellido_usuario, fecha_inicio
+      client.query(`SELECT COUNT(*) FROM proceso where estado_proceso = 1`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs counted');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )   
+  }
+
+
+
+  function listProcesos(page, pageSize) {    
+    console.log('prueba sat dos '+page+' '+pageSize);
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, proceso.cod_seguro, nom_tipo_seguro, nom_status, nom_usuario, apellido_usuario, fecha_inicio, estado_proceso
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
@@ -954,7 +1055,7 @@ function getNaturalezaById(id) {
       inner join status
       on proceso.cod_status = status.cod_status
       inner join usuario
-      on proceso.cod_usuario = usuario.cod_usuario WHERE cod_proceso >= $1 and cod_proceso <= $2  ORDER BY cod_proceso`,[start, end], (err, res) => {
+      on proceso.cod_usuario = usuario.cod_usuario where estado_proceso = 1 ORDER BY cod_proceso LIMIT $2 OFFSET ($1 - 1) * $2 `,[page, pageSize], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -972,7 +1073,7 @@ function getNaturalezaById(id) {
   function insertProceso(data) {
     const time = new Date().toISOString();
     return new Promise((resolve, reject) => {
-      let query = `insert into proceso(cod_seguro,cod_usuario,cod_cliente,cod_status,fecha_inicio,fecha_final) values ($1,$2,$3,$4,$5,$6) RETURNING cod_proceso`
+      let query = `insert into proceso(cod_seguro,cod_usuario,cod_cliente,cod_status,fecha_inicio,fecha_final,estado_proceso) values ($1,$2,$3,$4,$5,$6,1) RETURNING cod_proceso`
       client.query(query, [data.cod_seguro, data.cod_usuario, data.cod_cliente, data.cod_status, data.fecha_inicio, time], (err, res) => {
         if (err) {
           console.error(err);
@@ -989,7 +1090,7 @@ function getNaturalezaById(id) {
   function getProcesoById(id) {
 
     return new Promise((resolve, reject) => {
-      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.direccion, cliente.company, cliente.cedula, proceso.cod_seguro, nom_tipo_seguro, nom_status, status.cod_status, nom_usuario, fecha_inicio
+      client.query(`select cod_proceso, nom_cliente, apellido_cliente, cliente.direccion, cliente.company, cliente.cedula, proceso.cod_seguro, nom_tipo_seguro, nom_status, status.cod_status, nom_usuario, fecha_inicio, estado_proceso
       from proceso
       inner join cliente 
       on proceso.cod_cliente = cliente.cod_cliente
@@ -1026,7 +1127,40 @@ function getNaturalezaById(id) {
       on proceso.cod_seguro = seguro.cod_seguro
       inner join tipo_seguro
 on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
-      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '5 days'`, (err, res) => {
+      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days' AND estado_proceso = 1`, (err, res) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+  
+        }        
+        console.log('processs fetched');        
+        //console.log(res.rows);    
+        
+        resolve(res.rows);
+
+      });
+    }
+    )    
+  }
+
+  function listProcesosPorVencercePorEmpleado(id) {    
+    
+    return new Promise((resolve, reject) => {
+      
+      client.query(`select proceso.cod_proceso, nom_cliente, apellido_cliente, nom_tipo_seguro, fecha_vigencia_hasta, numero_poliza, usuario.cod_usuario  from poliza 
+      inner join seguimiento_por_proceso 
+      on poliza.cod_seguimiento = seguimiento_por_proceso.cod_seguimiento
+      inner join proceso 
+      on proceso.cod_proceso = seguimiento_por_proceso.cod_proceso
+      inner join cliente
+      on proceso.cod_cliente = cliente.cod_cliente
+      inner join seguro
+      on proceso.cod_seguro = seguro.cod_seguro
+      inner join tipo_seguro
+on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
+      inner join usuario
+      on proceso.cod_usuario = usuario.cod_usuario
+      WHERE  fecha_vigencia_hasta >= NOW() AND fecha_vigencia_hasta  <= NOW() + INTERVAL '10 days' and usuario.cod_usuario = $1 AND estado_proceso = 1`,[id], (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1471,7 +1605,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
    function countProcesosMesActual() {
     return new Promise((resolve, reject) => {
       
-      client.query(`select count(*) from proceso where fecha_inicio >= date_trunc('month', CURRENT_DATE)`, (err, res) => {
+      client.query(`select count(*) from proceso where fecha_inicio >= date_trunc('month', CURRENT_DATE) and estado_proceso = 1`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1490,7 +1624,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     return new Promise((resolve, reject) => {
       
       client.query(`select count(*) from proceso where  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
-      and fecha_inicio < date_trunc('month', current_date)`, (err, res) => {
+      and fecha_inicio < date_trunc('month', current_date) and estado_proceso = 1`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1508,7 +1642,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
   function countCotizacionesMesActual() {
     return new Promise((resolve, reject) => {
       
-      client.query(`select count(*) from proceso where cod_status = 2 and  fecha_inicio >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
+      client.query(`select count(*) from proceso where cod_status = 2 and  fecha_inicio >= date_trunc('month', CURRENT_DATE) and estado_proceso = 1;`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1527,7 +1661,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     return new Promise((resolve, reject) => {
       
       client.query(`select count(*) from proceso where cod_status = 2 and  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
-      and fecha_inicio < date_trunc('month', current_date)`, (err, res) => {
+      and fecha_inicio < date_trunc('month', current_date) and estado_proceso = 1`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1547,7 +1681,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
   function countSeguimientoMesActual() {
     return new Promise((resolve, reject) => {
       
-      client.query(`select count(*) from proceso where cod_status = 4 and  fecha_inicio >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
+      client.query(`select count(*) from proceso where cod_status = 4 and  fecha_inicio >= date_trunc('month', CURRENT_DATE) and estado_proceso = 1;`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1566,7 +1700,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     return new Promise((resolve, reject) => {
       
       client.query(`select count(*) from proceso where cod_status = 4 and  fecha_inicio >= date_trunc('month', current_date - interval '1' month)
-      and fecha_inicio < date_trunc('month', current_date)`, (err, res) => {
+      and fecha_inicio < date_trunc('month', current_date) and estado_proceso = 1`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1585,7 +1719,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
   function countClientesMesActual() {
     return new Promise((resolve, reject) => {
       
-      client.query(`select count(*) from cliente where fecha_creacion >= date_trunc('month', CURRENT_DATE);`, (err, res) => {
+      client.query(`select count(*) from cliente where fecha_creacion >= date_trunc('month', CURRENT_DATE) and estado_cliente = 1;`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1604,7 +1738,7 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     return new Promise((resolve, reject) => {
       
       client.query(`select count(*) from cliente where fecha_creacion >= date_trunc('month', current_date - interval '1' month)
-      and fecha_creacion < date_trunc('month', current_date)`, (err, res) => {
+      and fecha_creacion < date_trunc('month', current_date) and estado_cliente = 1`, (err, res) => {
         if (err) {
           console.error(err);
           reject(err);
@@ -1683,8 +1817,8 @@ on seguro.cod_tipo_seguro = tipo_seguro.cod_tipo_seguro
     function addAud(aud) {
      
       return new Promise((resolve, reject) => {
-        client.query(`insert into aud_cotizacion (id_cotizador,id_modificador,fecha,nom_cotizador,nom_modificador
-          ) values ($1,$2,$3,$4,$5)`,[aud.id_cotizador,aud.id_modificador,aud.fecha,aud.nom_cotizador,aud.nomAsigando] , (err, res) => {
+        client.query(`insert into aud_cotizacion (id_cotizador,id_modificador,fecha,nom_cotizador,nom_modificador,numero_proceso,codigo_cotizacion
+          ) values ($1,$2,$3,$4,$5,$6,$7)`,[aud.id_cotizador,aud.id_modificador,aud.fecha,aud.nom_cotizador,aud.nomAsigando,aud.cod_proceso, aud.numero_cotizacion] ,(err, res) => {
           if (err) {
             console.error(err);
             reject(err);
@@ -1706,6 +1840,7 @@ module.exports = {
   getUserByEmail,
   insertUser,
   updateUser,
+  updateAuth,
   insertAuth,
   updatePassword,
   listClients,
@@ -1753,6 +1888,7 @@ module.exports = {
   getNumeroCamposSeguro,
   listTipoSeguros,
   getAllCodProcesos,
+  deleteProceso,
   searchProcesos,
   insertProceso,
   getProcesoById,
@@ -1780,7 +1916,9 @@ module.exports = {
   insertPoliza,
   getPolizaByProceso,
   listProcesosPorVencerce,
+  listProcesosPorVencercePorEmpleado,
   updateStatus,
+  countProcesosEnabled,
   countProcesosMesActual,
   countProcesosMesPasado,
   countCotizacionesMesActual,
@@ -1792,6 +1930,8 @@ module.exports = {
   updatePoliza,
   listAud,
   getEmpAud,
-  addAud
+  addAud,
+  getAllEmails,
+  getAllPhones
 
 }

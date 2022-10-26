@@ -14,7 +14,7 @@ module.exports = function (injectedStore) {
         console.log('pgd '+pageNumber);
 
         
-        let lengthResult = await injectedStore.countProcesos();
+        let lengthResult = await injectedStore.countProcesosEnabled();
         let length = parseInt(lengthResult[0].count);
         let pageSize =  10;
         let page = parseInt(pageNumber);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
@@ -22,7 +22,7 @@ module.exports = function (injectedStore) {
         let nextPage = (page + 1);
         let end =Math.min((pageSize * nextPage), length);
         let begin = page * pageSize;
-        console.log((pageSize * (page + 1))+' '+pageSize+' '+nextPage+' peprpep');
+        console.log((pageSize * (page + 1))+' '+pageSize+' '+page+' peprpep');
 
        
        
@@ -30,9 +30,7 @@ module.exports = function (injectedStore) {
         let cmpLlenos = []
         let porcentajes = []
 
-        let listaProcesos = await injectedStore.listProcesos(begin + 1,end);
-
-        let listCodProcesos = await injectedStore.listProcesos(begin + 1,end);
+        let listaProcesos = await injectedStore.listProcesos(page + 1,pageSize);
 
         let listaSeguros = await injectedStore.listSeguros();
 
@@ -51,12 +49,12 @@ module.exports = function (injectedStore) {
             
         } 
 
-        for (let x = 0; x < listCodProcesos.length; x++) {
+        for (let x = 0; x < listaProcesos.length; x++) {
             let a = cmpLlenos[x];
             
             for (let y = 0; y < listaSeguros.length; y++) {                               
                 let b = cmpReq[y];                               
-                if (listCodProcesos[x].cod_seguro==listaSeguros[y].cod_seguro) {                     
+                if (listaProcesos[x].cod_seguro==listaSeguros[y].cod_seguro) {                     
                     let porcj = a/b;
                     porcentajes.push(porcj);  
                          
@@ -92,10 +90,19 @@ module.exports = function (injectedStore) {
         return injectedStore.listProcesosPorVencerce();
     }
 
+    async function getResumePorEmpleado(id){
+        return injectedStore.listProcesosPorVencercePorEmpleado(id);
+    }
+
     async function get(id) {
         console.log('myID '+id);
 
         let proceso = await injectedStore.getProcesoById(id);
+        let camposReq = await injectedStore.getNumeroCamposSeguro(proceso.cod_seguro)
+        let camposllenos = await injectedStore.getNCamposListosProceso(proceso.cod_proceso);
+        let porcj = camposllenos/camposReq.length;                     
+        proceso.porcentaje=porcj.toFixed(2); 
+
         let results = {
             category : "abierto",
             proceso : proceso,
@@ -108,31 +115,31 @@ module.exports = function (injectedStore) {
                 {
                     order   : 0,
                     title   : 'Resumen',
-                    subtitle: 'Resumen del proceso',
+                    subtitle: 'Vista general del proceso',
                     content : ''
                 },
                 {
                     order   : 1,
                     title   : 'Iniciación',
-                    subtitle: 'Where to find the sample code and how to access it',
+                    subtitle: 'Información básica sobre el seguro y el cliente.  ',
                     content : ''
                 },
                 {
                     order   : 2,
                     title   : 'Cotización',
-                    subtitle: 'How to create a basic Firebase project and how to run it locally',
+                    subtitle: 'Documentación necesria para la selección de la póliza.',
                     content : ''
                 },
                 {
                     order   : 3,
                     title   : 'Recabación de los documentos',
-                    subtitle: 'How to build, push and run the project remotely',
+                    subtitle: 'Documentos necesarios para la póliza.',
                     content : ''
                 },
                 {
                     order   : 4,
                     title   : 'Seguimiento',
-                    subtitle: 'Introducing the Functions and Functions Directory',
+                    subtitle: 'Seguimiento de la póliza.',
                     content : ''
                 }
             ],
@@ -166,7 +173,7 @@ module.exports = function (injectedStore) {
 
     }
     async function remove(id) {
-        return injectedStore.deleteSeguro(id);
+        return injectedStore.deleteProceso(id);
     }
     async function search(key){
         return injectedStore.searchProcesos(key);
@@ -209,7 +216,8 @@ module.exports = function (injectedStore) {
         get,
         getResume,
         getPannelData,
-        updateStatus
+        updateStatus,
+        getResumePorEmpleado
     }
 
 }

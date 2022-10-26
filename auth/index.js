@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { Error } = require('../network/response');
 const error = require('../utils/error')
 function signUser(user) {
-    return jwt.sign(user, process.env.TOKEN_KEY,{expiresIn: "14m"});
+    return jwt.sign(user, process.env.TOKEN_KEY,{expiresIn: "120m"});
 }
 
 function refreshToken(user) {
